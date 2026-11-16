@@ -58,7 +58,7 @@ li { margin-bottom: 6px; }
 <div class="demo">
   <iframe src="phosphor-form.html" title="Phosphor Form live demo" loading="lazy"></iframe>
 </div>
-<p class="demo-note">This is the live demo. <a href="phosphor-form.html">Open it on its own page</a>. It shows the CRT screen only in a browser that has HTML-in-Canvas turned on (see "Support" below). Without it, the demo shows the same form with plain CSS scanlines, and a line of text says so.</p>
+<p class="demo-note">This is the live demo. <a href="phosphor-form.html">Open it on its own page</a>. If HTML-in-Canvas is unavailable or rendering fails, the demo shows the same form with CSS scanlines and hides the shader settings.</p>
 <img class="shot" src="screenshot.png" alt="Phosphor Form drawn as an amber CRT screen: station registration form with callsign field, program radio buttons, scope time slider, equipment checkboxes, notes box, and transmit and clear buttons.">
 <p class="demo-note">Screenshot of the shader path, taken in Chrome 157 with the feature turned on.</p>
 
@@ -72,16 +72,16 @@ li { margin-bottom: 6px; }
 <p>The WICG proposal adds a path from the browser's own layout and text rendering into the canvas. The proposal lists three goals among others: accessible interactive content in canvas, rich text in canvas, and HTML in a 3D scene.</p>
 
 <h2>The five pieces of the proposal</h2>
-<p>The WICG README (<a href="https://github.com/WICG/html-in-canvas">github.com/WICG/html-in-canvas</a>) names five primitives. This table shows each one and where Phosphor Form uses it. Line numbers refer to <a href="phosphor-form.html"><code>docs/phosphor-form.html</code></a>.</p>
+<p>The WICG README (<a href="https://github.com/WICG/html-in-canvas">github.com/WICG/html-in-canvas</a>) names five primitives. This table shows where the demo uses them in <a href="phosphor-form.html"><code>docs/phosphor-form.html</code></a>.</p>
 <div class="tbl">
 <table>
   <thead><tr><th>Piece</th><th>What it does</th><th>In Phosphor Form</th></tr></thead>
   <tbody>
-    <tr><td><code>content="drawable"</code> on the canvas</td><td>Makes the canvas children real, laid-out HTML instead of fallback content.</td><td>Line 119: <code>&lt;canvas id="crt" content="drawable" layoutsubtree&gt;</code>. The older <code>layoutsubtree</code> attribute stays for older builds.</td></tr>
-    <tr><td><code>drawable</code> on a child</td><td>Marks which child can be drawn.</td><td>Line 120: <code>&lt;form id="form" drawable&gt;</code>. The whole form is one drawable element.</td></tr>
-    <tr><td><code>paint</code> event and <code>requestPaint()</code></td><td>Tells the page when the HTML changed, so the page can redraw.</td><td>Line 293: the <code>paint</code> handler copies the form into a texture. Typing, the blinking cursor, and the clock each trigger it. Line 298 wraps <code>requestPaint()</code>, and the resize code calls it (line 309).</td></tr>
-    <tr><td>Draw call: <code>drawElementImage</code> (2D), <code>texElementSubImage2D</code> (WebGL), <code>drawElementImageToTexture</code> (WebGPU)</td><td>Copies the latest snapshot of the element into the canvas or a texture.</td><td>Line 273: <code>gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, form)</code>. This is the WebGL variant.</td></tr>
-    <tr><td><code>updateElementGeometry</code></td><td>Tells the browser where the element was drawn, so mouse hits and accessibility match.</td><td>Line 290: called with an identity transform. With a WebGL canvas the page must call it, because the browser cannot know the layout of the texture on screen.</td></tr>
+    <tr><td><code>content="drawable"</code> on the canvas</td><td>Makes the canvas children real, laid-out HTML instead of fallback content.</td><td><code>&lt;canvas id="crt" content="drawable" layoutsubtree&gt;</code>. The older <code>layoutsubtree</code> attribute stays for older builds.</td></tr>
+    <tr><td><code>drawable</code> on a child</td><td>Marks which child can be drawn.</td><td><code>&lt;form id="form" drawable&gt;</code>. The whole form is one drawable element.</td></tr>
+    <tr><td><code>paint</code> event and <code>requestPaint()</code></td><td>Tells the page when the HTML changed, so the page can redraw.</td><td>The <code>paint()</code> handler copies the form into a texture. Typing, the blinking cursor, and the clock each trigger the event. <code>fit()</code> requests a paint after sizing the canvas.</td></tr>
+    <tr><td>Draw call: <code>drawElementImage</code> (2D), <code>texElementSubImage2D</code> (WebGL), <code>drawElementImageToTexture</code> (WebGPU)</td><td>Copies the latest snapshot of the element into the canvas or a texture.</td><td>The first upload strategy in <code>startShader()</code> calls <code>gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, form)</code>.</td></tr>
+    <tr><td><code>updateElementGeometry</code></td><td>Tells the browser where the element was drawn, so mouse hits and accessibility match.</td><td><code>paint()</code> calls it with an identity transform. With a WebGL canvas the page must call it, because the browser cannot know the layout of the texture on screen.</td></tr>
   </tbody>
 </table>
 </div>
@@ -120,42 +120,42 @@ li { margin-bottom: 6px; }
 <ol>
   <li><strong>The form is real DOM, not a picture of one.</strong> Click CALLSIGN and type. The browser handles the caret, selection, Backspace, and Tab order. The radio buttons, checkboxes, range slider, and textarea are native controls. The page contains no code that draws a text field.</li>
   <li><strong>The browser's own renderer makes the pixels.</strong> The VT323 font, the dashed lines, and the checked-box styling come from ordinary CSS (<code>#form</code> rules in the page). The canvas receives a snapshot of that rendering.</li>
-  <li><strong>The pixels reach a shader as a texture.</strong> The shader (lines 200 to 236) bends the image, shifts the red and blue channels, adds glow, scanlines, a phosphor stripe mask, and static. A normal DOM page cannot do this to a live form. The sliders under the screen change those shader settings while you type.</li>
+  <li><strong>The pixels reach a shader as a texture.</strong> The fragment shader (<code>FS</code>) bends the image, shifts the red and blue channels, adds glow, scanlines, a phosphor stripe mask, and static. A normal DOM page cannot do this to a live form. The sliders under the screen change those shader settings while you type.</li>
 </ol>
 
 <h3>What does not count</h3>
 <ul>
   <li><strong>A CSS filter or overlay on a div.</strong> It can add scanlines, but not curvature with per-channel colour fringing, and not a custom fragment shader.</li>
   <li><strong>A canvas that draws text with <code>fillText</code>.</strong> The page would have to rebuild the form controls itself.</li>
-  <li><strong>The fallback in the same file.</strong> If the browser has no HTML-in-Canvas, <code>phosphor-form.html</code> moves the form out of the canvas (line 191) and shows it with CSS scanlines. That is the same form without the feature. Comparing the two views shows what the API adds.</li>
+  <li><strong>The fallback in the same file.</strong> <code>showFallback()</code> moves the form out of the canvas and shows it with CSS scanlines. Comparing the two views shows what the API adds.</li>
 </ul>
 
 <h2>Where the API is still rough</h2>
-<p>The proposal is experimental, and the call names changed while I built the demo. These are the problems I met, in order. Each one is fixed in the current file.</p>
+<p>The proposal is experimental, and the call names changed while I built the demo. These are the problems I met, in order.</p>
 <div class="tbl">
 <table>
   <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
   <tbody>
-    <tr><td><code>TypeError: texElementImage2D … not of type (Element or ElementImage)</code></td><td>The first version used the older <code>texElementImage2D</code> call form. The current spec uses <code>texElementSubImage2D</code>, <code>content="drawable"</code> and the <code>drawable</code> attribute.</td><td>Use the current names. Keep the older calls as fallbacks (lines 264 to 277).</td></tr>
-    <tr><td><code>canvas.getElementImageDefaultSize is not a function</code></td><td>One Chrome build has <code>texElementSubImage2D</code> but not this size helper.</td><td>Use the canvas size when the helper is missing (line 268).</td></tr>
-    <tr><td>Screen shows only static, no form. <code>gl.getError()</code> returns 1281 (INVALID_VALUE).</td><td><code>getElementImageDefaultSize</code> returned a height of 779.58. The texture was 779 pixels high and the 780-pixel copy failed without an exception.</td><td>Round the size up with <code>Math.ceil</code> (line 268).</td></tr>
+    <tr><td><code>TypeError: texElementImage2D … not of type (Element or ElementImage)</code></td><td>The first version used the older <code>texElementImage2D</code> call form. The current spec uses <code>texElementSubImage2D</code>, <code>content="drawable"</code> and the <code>drawable</code> attribute.</td><td>Try the current signature first and keep the two older call forms as alternatives when the browser exposes them.</td></tr>
+    <tr><td><code>canvas.getElementImageDefaultSize is not a function</code></td><td>One Chrome build has <code>texElementSubImage2D</code> but not this size helper.</td><td>Use the canvas size when the helper is missing.</td></tr>
+    <tr><td>Screen shows only static, no form. <code>gl.getError()</code> returns 1281 (INVALID_VALUE).</td><td><code>getElementImageDefaultSize</code> returned a height of 779.58. The texture was 779 pixels high and the 780-pixel copy failed without an exception.</td><td>Round the size up with <code>Math.ceil</code> and check WebGL errors after allocation and upload.</td></tr>
     <tr><td>Clicks land a few pixels off at high curvature.</td><td>The browser hit-tests the form at its layout position. The shader bends the drawn image.</td><td>Not fixed. The page says so. Keyboard focus is exact.</td></tr>
   </tbody>
 </table>
 </div>
-<p>The page counts a missing <code>paint</code> event or a failed upload as an error and prints it under the sliders after 2.5 seconds. That line found the first three problems.</p>
+<p>The demo enables shader controls after the first successful frame. If shader setup or upload fails, or if the first frame takes longer than 2.5 seconds to arrive, the demo switches to the CSS form and shows the reason.</p>
 
 <h2>Support and how to see the shader</h2>
 <ul>
   <li><strong>Claude desktop app:</strong> Felix Rieseberg's post says he enabled the feature there. My own test of this page used a separate Chrome, not the app viewer.</li>
   <li><strong>Chrome:</strong> open <code>chrome://flags/#canvas-draw-element</code>, set it to Enabled, and restart.</li>
-  <li><strong>What I tested:</strong> Chrome 157 (headless) started with <code>--enable-experimental-web-platform-features --enable-blink-features=CanvasDrawElement</code>. The form showed, typed text appeared on screen, and the curvature slider changed the screen shape. I did not test other browsers.</li>
+  <li><strong>What was verified:</strong> Headless Chrome 157 rendered both paths at 900 px desktop width and 390 px emulated mobile width. The form accepted input and submission, and the shader controls worked when WebGL rendering was active.</li>
 </ul>
 
 <h2>Known issues</h2>
 <ul>
   <li>One report: in the Claude desktop app viewer, the CALLSIGN field accepted only 4 letters. I typed 12 letters in Chrome 157 at 900 and 420 pixels width and all were accepted, so I could not reproduce it. The cause is unknown.</li>
-  <li>The other sliders, the Bypass button, TRANSMIT, and touch input have no automated test.</li>
+  <li>Mobile verification used Chrome touch emulation. Physical mobile devices and other browsers remain unverified.</li>
   <li>The API is a proposal. Names and signatures can change again.</li>
 </ul>
 

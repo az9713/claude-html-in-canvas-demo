@@ -20,13 +20,13 @@ In this demo:
 
 | Piece of the proposal | Where it is in `docs/phosphor-form.html` |
 |---|---|
-| `content="drawable"` on the canvas | line 119 |
-| `drawable` on the form | line 120 |
-| `paint` event, `requestPaint()` | lines 293 and 298 |
-| `texElementSubImage2D` (WebGL draw call) | line 273 |
-| `updateElementGeometry` (hit testing) | line 290 |
+| `content="drawable"` on the canvas | `<canvas id="crt">` |
+| `drawable` on the form | `<form id="form">` |
+| `paint` event, `requestPaint()` | The canvas listener calls `paint()`. `fit()` requests a paint after sizing the canvas. |
+| `texElementSubImage2D` (WebGL draw call) | First texture upload strategy in `startShader()` |
+| `updateElementGeometry` (hit testing) | `paint()` |
 
-The form is real DOM. The browser handles the caret, focus, radio buttons, checkboxes, range slider, and textarea. The page contains no code that draws a text field. The browser's own renderer makes the pixels, and a fragment shader (lines 200 to 236) curves them, splits the colour channels, and adds glow, scanlines, and static.
+The form is real DOM. The browser handles the caret, focus, radio buttons, checkboxes, range slider, and textarea. The page contains no code that draws a text field. The browser's own renderer makes the pixels, and the fragment shader (`FS`) curves them, splits the colour channels, and adds glow, scanlines, and static.
 
 The [explainer](https://az9713.github.io/claude-html-in-canvas-demo/) covers this in full: the five pieces, a diagram of how a keystroke reaches the shader, what does not count as HTML in Canvas, and the API problems found while building it.
 
@@ -73,7 +73,11 @@ The shader needs a browser with HTML-in-Canvas turned on:
 - **Chrome:** open `chrome://flags/#canvas-draw-element`, set it to Enabled, and restart.
 - **Claude desktop app:** Felix Rieseberg's post says the feature is enabled there. I tested only in a separate Chrome, not in the app.
 
-Without the feature, the page shows the same form with CSS scanlines and a line of text that says so.
+## What changed on screen
+
+- On phones, the page opens at normal zoom and fits the screen width. The station header and form buttons can wrap on narrow screens, and the shader settings stack as space gets tight.
+- In CSS fallback, the amber form and scanlines remain visible, and the shader settings are hidden. If the shader fails to start, the page switches to that same form and displays the reason.
+- In shader mode, the settings appear after the first successful frame. The amber glow, curvature, and scanline effects retain their original look.
 
 ## Run it locally
 
@@ -99,7 +103,7 @@ GitHub Pages serves only the `docs/` folder.
 ## Status and known issues
 
 - HTML-in-Canvas is a proposal. Call names changed while this demo was built (`texElementImage2D` became `texElementSubImage2D`). The demo tries three call forms and keeps the first that works.
-- Tested: Chrome 157 (headless) with `--enable-experimental-web-platform-features --enable-blink-features=CanvasDrawElement`. Typing, the curvature slider, and the shader output work there.
-- Not tested: other browsers, touch input, the TRANSMIT button, the Bypass button, and the sliders other than curvature.
+- Verified in headless Chrome 157 at 900 px desktop width and 390 px emulated mobile width. Both rendering paths accepted form input and submission. Shader settings and Bypass worked in the shader path. At 320 px, both paths fit the viewport.
+- Mobile verification used Chrome touch emulation. Other browsers and physical mobile devices remain unverified.
 - One report: in the Claude desktop app viewer, the CALLSIGN field accepted only 4 letters. It did not reproduce in Chrome 157. The cause is unknown.
 - At high curvature, a click near the edge can land a few pixels off the drawn target. The browser hit-tests the form at its layout position. Keyboard focus is exact.

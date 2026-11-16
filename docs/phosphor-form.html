@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Phosphor Form</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=VT323&display=swap">
@@ -92,9 +97,10 @@ header p { margin: 0; color: var(--muted); max-width: 62ch; }
 }
 
 .controls {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px 22px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: 14px 22px;
   background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px;
 }
+.controls[hidden] { display: none; }
 .controls label { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; color: var(--muted); }
 .controls label output { color: var(--fg); font-variant-numeric: tabular-nums; }
 .controls input[type=range] { grid-column: 1 / -1; width: 100%; min-width: 0; accent-color: var(--amber); margin: 0; }
@@ -104,9 +110,17 @@ header p { margin: 0; color: var(--muted); max-width: 62ch; }
 }
 .controls button:hover, .controls button:focus-visible { border-color: var(--amber); color: var(--amber); outline: none; }
 .controls button[aria-pressed=true] { background: var(--amber); color: #1a1100; border-color: var(--amber); }
-#status { margin: 0; color: var(--muted); font-size: 12px; }
+#status { margin: 0; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
 #status b { color: var(--amber); font-weight: 500; }
+@media (max-width: 480px) {
+  #form { padding-inline: 16px; }
+  #form .head { flex-wrap: wrap; gap: 0 12px; }
+  #form label.field { gap: 8px; }
+  #form .btns { flex-wrap: wrap; }
+}
 </style>
+</head>
+<body>
 
 <main class="wrap">
   <header>
@@ -143,7 +157,7 @@ header p { margin: 0; color: var(--muted); max-width: 62ch; }
     </div>
   </div>
 
-  <section class="controls" id="controls" aria-label="CRT settings">
+  <section class="controls" id="controls" aria-label="CRT settings" hidden>
     <label>Curvature <output id="o-curve"></output><input type="range" min="0" max="100" data-k="curve" value="25"></label>
     <label>Scanlines <output id="o-scan"></output><input type="range" min="0" max="100" data-k="scan" value="60"></label>
     <label>Phosphor glow <output id="o-glow"></output><input type="range" min="0" max="100" data-k="glow" value="55"></label>
@@ -159,6 +173,7 @@ header p { margin: 0; color: var(--muted); max-width: 62ch; }
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var canvas = $('crt'), form = $('form'), stage = $('stage'), status = $('status');
+  var controls = $('controls'), stopShader = function () {};
 
   /* ---- live form behaviour (plain DOM; works in either mode) ---- */
   var sent = 0;
@@ -182,19 +197,18 @@ header p { margin: 0; color: var(--muted); max-width: 62ch; }
   function tick() { $('clock').textContent = new Date().toISOString().slice(11, 19) + ' UTC'; }
   tick(); setInterval(tick, 1000);
 
-  /* ---- feature detection ---- */
-  var gl = null;
-  try { gl = canvas.getContext('webgl2', { antialias: false, alpha: false }); } catch (e) {}
-  var supported = !!gl && (typeof gl.texElementSubImage2D === 'function' || typeof gl.texElementImage2D === 'function');
-
-  if (!supported) {
+  function showFallback(error) {
+    stopShader();
+    form.style.removeProperty('width');
     stage.replaceChildren(form);
     stage.classList.add('plain');
-    $('controls').hidden = true;
-    status.innerHTML = '<b>HTML-in-Canvas is not available in this browser.</b> Showing the same live form with CSS scanlines instead. To see the shader, open this in the Claude desktop app, or enable <code>chrome://flags/#canvas-draw-element</code> in Chrome and restart it.';
-    return;
+    controls.hidden = true;
+    if (error) {
+      status.textContent = 'HTML-in-Canvas rendering failed. Showing the live form with CSS scanlines. ' + error.message;
+    } else {
+      status.innerHTML = '<b>HTML-in-Canvas is not available in this browser.</b> Showing the same live form with CSS scanlines instead. To see the shader, open this in the Claude desktop app, or enable <code>chrome://flags/#canvas-draw-element</code> in Chrome and restart it.';
+    }
   }
-  status.innerHTML = '<b>HTML-in-Canvas active.</b> The form is a real DOM element drawn with <code>gl.texElementSubImage2D</code>. Mouse clicks use the true position of the form, so with high curvature a click near the edge can land a few pixels off the drawn target. Keyboard focus is exact.';
 
   /* ---- shader ---- */
   var VS = '#version 300 es\nout vec2 vUv;\nvoid main(){vec2 p=vec2(float((gl_VertexID<<1)&2),float(gl_VertexID&2));vUv=p;gl_Position=vec4(p*2.-1.,0.,1.);}';
@@ -234,115 +248,204 @@ header p { margin: 0; color: var(--muted); max-width: 62ch; }
   '  col*=mix(1.,1.-smoothstep(-.002,.002,d),fx);\n' +
   '  outc=vec4(col*mix(1.,boot,fx),1.);\n' +
   '}';
-  function sh(type, src) {
-    var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
-    return s;
-  }
-  var prog = gl.createProgram();
-  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS));
-  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
-  gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
-  gl.useProgram(prog);
-  var U = {};
-  ['uTex','uRes','uDpr','uTime','uFx','uCurve','uScan','uGlow','uAber','uNoise','uBoot'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
-  gl.uniform1i(U.uTex, 0);
+  function startShader(gl) {
+    var events = new AbortController();
+    var listenerOptions = { signal: events.signal };
+    var observer, frame, startupTimer;
+    var prog = gl.createProgram(), tex = gl.createTexture();
+    stopShader = function () {
+      events.abort();
+      if (observer) observer.disconnect();
+      cancelAnimationFrame(frame);
+      clearTimeout(startupTimer);
+      gl.deleteTexture(tex);
+      gl.deleteProgram(prog);
+      stopShader = function () {};
+    };
 
-  var tex = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([18, 12, 3, 255]));
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-  /* ---- DOM -> texture ---- */
-  var gotPaint = false;
-  /* Chrome builds differ, so try each known call form and keep the first that works. */
-  var texW = 0, texH = 0, strat = -1;
-  var strategies = [
-    function () { /* current spec: allocate, then copy the element in */
-      if (typeof gl.texElementSubImage2D !== 'function') throw new Error('no texElementSubImage2D');
-      var w = canvas.width, h = canvas.height;
-      if (canvas.getElementImageDefaultSize) { var sz = canvas.getElementImageDefaultSize(form); w = Math.ceil(sz.width); h = Math.ceil(sz.height); }
-      if (w !== texW || h !== texH) {
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-        texW = w; texH = h;
+    function checkGlError(operation) {
+      var errors = [];
+      for (var code = gl.getError(); code !== gl.NO_ERROR; code = gl.getError()) {
+        errors.push('0x' + code.toString(16));
       }
-      gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, form);
-    },
-    function () { gl.texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, form); },
-    function () { gl.texElementImage2D(gl.TEXTURE_2D, gl.RGBA8, form); }
-  ];
-  function upload() {
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    if (strat >= 0) strategies[strat]();
-    else {
-      var errs = [];
-      for (var i = 0; i < strategies.length; i++) {
-        try { strategies[i](); strat = i; break; } catch (e) { errs.push('call form ' + (i + 1) + ': ' + e.message); }
-      }
-      if (strat < 0) throw new Error(errs.join(' | '));
+      if (errors.length) throw new Error(operation + ' produced WebGL error ' + errors.join(', ') + '.');
     }
-    /* make the form hit-testable (it is not until geometry is set); identity = drawn at its layout box */
-    try { if (canvas.updateElementGeometry) canvas.updateElementGeometry(form, { canvasTransform: new DOMMatrix() }); } catch (e) {}
-  }
-  var uploadErr = '';
-  canvas.addEventListener('paint', function () { gotPaint = true; try { upload(); uploadErr = ''; } catch (e) { uploadErr = String(e); console.warn(e); } });
-  setTimeout(function () {
-    if (gotPaint && !uploadErr) return;
-    status.innerHTML += '<br><b>Problem:</b> ' + (uploadErr ? 'the upload to the shader failed. ' + uploadErr : 'the canvas never fired a paint event, so the form was never copied to the shader.') + ' The sliders only change the shader, so they do nothing until this works.';
-  }, 2500);
-  function requestPaint() { if (canvas.requestPaint) canvas.requestPaint(); }
+    function attachShader(type, source) {
+      var shader = gl.createShader(type);
+      try {
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          throw new Error('Shader compilation failed. ' + gl.getShaderInfoLog(shader));
+        }
+        gl.attachShader(prog, shader);
+      } finally {
+        gl.deleteShader(shader);
+      }
+    }
+    attachShader(gl.VERTEX_SHADER, VS);
+    attachShader(gl.FRAGMENT_SHADER, FS);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      throw new Error('Shader linking failed. ' + gl.getProgramInfoLog(prog));
+    }
+    gl.useProgram(prog);
+    var U = {};
+    ['uTex','uRes','uDpr','uTime','uFx','uCurve','uScan','uGlow','uAber','uNoise','uBoot'].forEach(function (name) {
+      U[name] = gl.getUniformLocation(prog, name);
+    });
+    gl.uniform1i(U.uTex, 0);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    checkGlError('Shader setup');
 
-  var dpr = 1;
-  function fit() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var w = Math.floor(stage.clientWidth);
-    form.style.width = w + 'px';
-    var h = Math.ceil(form.offsetHeight) || 520;
-    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
-    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    requestPaint();
-  }
-  new ResizeObserver(fit).observe(stage);
-  new ResizeObserver(fit).observe(form);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(); });
+    /* Select an upload signature only after both the call and WebGL's error check succeed. */
+    var texW = 0, texH = 0, uploadTexture;
+    var strategies = [];
+    if (typeof gl.texElementSubImage2D === 'function') {
+      strategies.push(function () {
+        var w = canvas.width, h = canvas.height;
+        if (canvas.getElementImageDefaultSize) {
+          var size = canvas.getElementImageDefaultSize(form);
+          w = Math.ceil(size.width);
+          h = Math.ceil(size.height);
+        }
+        if (w !== texW || h !== texH) {
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+          checkGlError('Texture allocation');
+          texW = w;
+          texH = h;
+        }
+        gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, form);
+      });
+    }
+    if (typeof gl.texElementImage2D === 'function') {
+      strategies.push(
+        function () { gl.texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, form); },
+        function () { gl.texElementImage2D(gl.TEXTURE_2D, gl.RGBA8, form); }
+      );
+    }
+    function copyForm(copy) {
+      try {
+        copy();
+      } finally {
+        checkGlError('Form texture upload');
+      }
+    }
+    function selectUpload() {
+      var errors = [];
+      for (var copy of strategies) {
+        try {
+          copyForm(copy);
+          return copy;
+        } catch (error) {
+          errors.push(error.message);
+        }
+      }
+      throw new Error('Could not copy the form to WebGL. ' + errors.join(' '));
+    }
+    function paint() {
+      try {
+        if (uploadTexture) copyForm(uploadTexture);
+        else uploadTexture = selectUpload();
+        /* Identity keeps the hit targets at the form's layout position. */
+        if (canvas.updateElementGeometry) {
+          canvas.updateElementGeometry(form, { canvasTransform: new DOMMatrix() });
+        }
+        if (frame === undefined) frame = requestAnimationFrame(render);
+      } catch (error) {
+        showFallback(error);
+      }
+    }
 
-  /* ---- controls ---- */
-  var P = { curve: .25, scan: .6, glow: .55, aber: .4, noise: .3 };
-  document.querySelectorAll('#controls input[data-k]').forEach(function (el) {
-    function sync() { P[el.dataset.k] = el.value / 100; $('o-' + el.dataset.k).textContent = el.value; }
-    el.addEventListener('input', sync); sync();
-  });
-  var fxTarget = 1, fx = 0;
-  $('bypass').addEventListener('click', function (e) {
-    fxTarget = fxTarget ? 0 : 1;
-    e.currentTarget.setAttribute('aria-pressed', String(!fxTarget));
-  });
+    var dpr = 1;
+    function fit() {
+      if (events.signal.aborted) return;
+      try {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var w = stage.clientWidth;
+        form.style.width = w + 'px';
+        var h = form.offsetHeight || 520;
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        var pixelWidth = Math.round(w * dpr), pixelHeight = Math.round(h * dpr);
+        if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+        if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        if (canvas.requestPaint) canvas.requestPaint();
+      } catch (error) {
+        showFallback(error);
+      }
+    }
 
-  /* ---- render loop ---- */
-  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var t0 = performance.now(), frame = 0;
-  function render(now) {
-    var t = (now - t0) / 1000;
-    fx += (fxTarget - fx) * .15;
-    frame++;
-    if (!gotPaint && frame % 30 === 0) { try { upload(); } catch (e) { uploadErr = String(e); } requestPaint(); }
-    gl.uniform2f(U.uRes, canvas.width, canvas.height);
-    gl.uniform1f(U.uDpr, dpr);
-    gl.uniform1f(U.uTime, still ? 10 : t);
-    gl.uniform1f(U.uFx, fx);
-    gl.uniform1f(U.uCurve, P.curve); gl.uniform1f(U.uScan, P.scan); gl.uniform1f(U.uGlow, P.glow);
-    gl.uniform1f(U.uAber, P.aber); gl.uniform1f(U.uNoise, still ? 0 : P.noise);
-    gl.uniform1f(U.uBoot, still ? 1 : Math.min(t / 1.1, 1));
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-    requestAnimationFrame(render);
+    var P = {};
+    controls.querySelectorAll('input[data-k]').forEach(function (el) {
+      function sync() { P[el.dataset.k] = el.value / 100; $('o-' + el.dataset.k).textContent = el.value; }
+      el.addEventListener('input', sync, listenerOptions);
+      sync();
+    });
+    var fxTarget = 1, fx = 0;
+    $('bypass').addEventListener('click', function (e) {
+      fxTarget = fxTarget ? 0 : 1;
+      e.currentTarget.setAttribute('aria-pressed', String(!fxTarget));
+    }, listenerOptions);
+
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var t0 = performance.now();
+    function render(now) {
+      var t = (now - t0) / 1000;
+      fx += (fxTarget - fx) * .15;
+      gl.uniform2f(U.uRes, canvas.width, canvas.height);
+      gl.uniform1f(U.uDpr, dpr);
+      gl.uniform1f(U.uTime, still ? 10 : t);
+      gl.uniform1f(U.uFx, fx);
+      gl.uniform1f(U.uCurve, P.curve); gl.uniform1f(U.uScan, P.scan); gl.uniform1f(U.uGlow, P.glow);
+      gl.uniform1f(U.uAber, P.aber); gl.uniform1f(U.uNoise, still ? 0 : P.noise);
+      gl.uniform1f(U.uBoot, still ? 1 : Math.min(t / 1.1, 1));
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      if (controls.hidden) {
+        try {
+          checkGlError('First shader frame');
+        } catch (error) {
+          showFallback(error);
+          return;
+        }
+        clearTimeout(startupTimer);
+        controls.hidden = false;
+        status.innerHTML = '<b>HTML-in-Canvas active.</b> The form is a real DOM element copied into a WebGL texture. Mouse clicks use the true position of the form, so with high curvature a click near the edge can land a few pixels off the drawn target. Keyboard focus is exact.';
+      }
+      frame = requestAnimationFrame(render);
+    }
+
+    canvas.addEventListener('paint', paint, listenerOptions);
+    canvas.addEventListener('webglcontextlost', function () {
+      showFallback(new Error('The WebGL context was lost.'));
+    }, listenerOptions);
+    startupTimer = setTimeout(function () {
+      showFallback(new Error('The first canvas frame did not arrive.'));
+    }, 2500);
+    observer = new ResizeObserver(fit);
+    observer.observe(stage);
+    observer.observe(form);
+    if (document.fonts) document.fonts.ready.then(fit);
+    fit();
   }
-  fit();
-  requestAnimationFrame(render);
+
+  try {
+    var gl = canvas.getContext('webgl2', { antialias: false, alpha: false });
+    if (gl && (typeof gl.texElementSubImage2D === 'function' || typeof gl.texElementImage2D === 'function')) {
+      startShader(gl);
+    } else {
+      showFallback();
+    }
+  } catch (error) {
+    showFallback(error);
+  }
 })();
 </script>
+</body>
+</html>
