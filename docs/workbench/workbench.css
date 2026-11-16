@@ -98,3 +98,7 @@ button:disabled { opacity: .55; cursor: default; }
   #scene-surface { height: 400px; }
   .scene-toolbar select { max-width: 175px; }
 }
+.embedded .masthead, .embedded .catalog { display: none; }
+.embedded .layout { display: block; }
+.embedded main { padding: 14px; }
+.embedded #scene-surface { height: 400px; }

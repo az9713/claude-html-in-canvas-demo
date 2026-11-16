@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src data: blob:; base-uri 'none'; form-action 'none'">
+  <title>3D control panel</title>
+  <link rel="stylesheet" href="lab.css">
+  <script defer src="renderer.js"></script>
+  <script defer src="panel.js"></script>
+</head>
+<body>
+  <main class="lab">
+    <header>
+      <h1>3D control panel</h1>
+      <p>Turn the device to check display legibility. Then operate the real controls on its tilted face and run a simulated commissioning check.</p>
+    </header>
+    <div class="controls panel-controls">
+      <label id="angle-control" for="angle">View angle <output id="angle-value" for="angle">−26°</output>
+        <input id="angle" type="range" min="-42" max="42" value="-26">
+      </label>
+      <label for="load">Heat load <output id="load-value" for="load">42 W</output>
+        <input id="load" type="range" min="10" max="90" value="42">
+      </label>
+      <button id="front" type="button">Front view</button>
+      <button id="export" type="button" hidden>Save PNG</button>
+    </div>
+    <canvas id="scene" class="instrument-scene" content="drawable" layoutsubtree aria-label="Simulated cooling controller with interactive controls on its front surface">
+      <section class="instrument" id="controller" drawable aria-label="Cooling controller">
+        <header class="instrument-title"><span>Cooling loop</span><h2>Bench controller</h2></header>
+        <div class="readout">
+          <span>Predicted steady state</span>
+          <output id="temperature">—</output>
+          <span id="margin">—</span>
+        </div>
+        <div class="instrument-data">
+          <label>Device label<input id="device" type="text" value="Bench A" spellcheck="false"></label>
+          <label>Fan profile<select id="profile"><option value="2">Quiet</option><option value="4" selected>Balanced</option><option value="6">High flow</option></select></label>
+        </div>
+        <label class="check"><input id="enabled" type="checkbox" checked> Fan enabled</label>
+        <button id="commission" type="button">Run commissioning check</button>
+        <output id="result" class="instrument-result" aria-live="polite">Ready for check</output>
+      </section>
+    </canvas>
+    <div id="plain" class="plain" hidden></div>
+    <p id="engine" role="status" class="caption">Preparing the controller.</p>
+  </main>
+</body>
+</html>

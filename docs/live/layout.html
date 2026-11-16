@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src data: blob:; base-uri 'none'; form-action 'none'">
+  <title>Live layout diff</title>
+  <link rel="stylesheet" href="lab.css">
+  <script defer src="renderer.js"></script>
+  <script defer src="layout.js"></script>
+</head>
+<body>
+  <main class="lab">
+    <header>
+      <h1>Live layout diff</h1>
+      <p>Type in either form. Both use the same data. Narrow the layout and use Pixel diff to see where a CSS fix moves the buttons.</p>
+    </header>
+    <div class="controls">
+      <label id="width-control" for="panel-width">Source width <output id="width-value" for="panel-width">292 px</output>
+        <input id="panel-width" type="range" min="240" max="470" value="292">
+      </label>
+      <label id="view-control" for="view">View
+        <select id="view">
+          <option value="edit">Edit both forms</option>
+          <option value="wipe">Wipe between versions</option>
+          <option value="diff">Pixel diff</option>
+        </select>
+      </label>
+      <label id="wipe-control" for="wipe" hidden>Wipe position
+        <input id="wipe" type="range" min="0" max="100" value="50">
+      </label>
+      <button id="export" type="button" hidden>Save PNG</button>
+    </div>
+    <div class="measurements" aria-live="polite">
+      <p>Baseline overflow <strong id="before-overflow">—</strong></p>
+      <p>Candidate overflow <strong id="after-overflow">—</strong></p>
+    </div>
+    <p id="view-note" class="caption">Baseline first, candidate second. Only the candidate wraps the action buttons.</p>
+    <canvas id="scene" content="drawable" layoutsubtree aria-label="Live comparison of two maintenance-request layouts">
+      <section class="ticket baseline" id="baseline" drawable aria-label="Baseline request form"></section>
+      <section class="ticket candidate" id="candidate" drawable aria-label="Candidate request form"></section>
+    </canvas>
+    <div id="plain" class="plain" hidden></div>
+    <p id="engine" role="status" class="caption">Preparing the comparison.</p>
+    <template id="ticket-template">
+      <div class="ticket-title"><span>Service desk</span><h2>Maintenance request</h2></div>
+      <label>Request title<input data-field="title" type="text" value="Inspect the workshop exhaust" spellcheck="false"></label>
+      <label>Priority<select data-field="priority"><option>Routine</option><option>Urgent</option></select></label>
+      <label>Notes<textarea data-field="notes" rows="2" spellcheck="false">Check vibration at the lowest speed.</textarea></label>
+      <div class="actions">
+        <button type="button" data-status="Ready for review">Send for review</button>
+        <button type="button" data-status="Saved as unassigned">Save without assigning</button>
+      </div>
+      <output class="ticket-status" aria-live="polite">Draft</output>
+    </template>
+  </main>
+</body>
+</html>

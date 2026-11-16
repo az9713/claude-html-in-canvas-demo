@@ -31,6 +31,10 @@ pre code { background: none; padding: 0; font-size: inherit; }
 .tag { font: 600 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--teal); }
 .demo { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #0b0907; }
 .demo iframe { display: block; width: 100%; height: 1320px; border: 0; }
+.live-frame { display: block; width: 100%; height: 820px; border: 1px solid var(--line); border-radius: 10px; background: #0d141a; }
+.gallery-preview { margin: 0 0 10px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 5px; background: var(--bg); color: var(--teal); font: inherit; font-size: 14px; cursor: pointer; }
+.gallery-project.is-live { grid-column: 1 / -1; }
+.gallery-project.is-live .gallery-shot { display: none; }
 .demo-note { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
 .shot { width: 100%; max-width: 560px; height: auto; border-radius: 10px; border: 1px solid var(--line); display: block; margin: 14px 0 6px; }
 .comparison-pair {
@@ -118,7 +122,18 @@ li { margin-bottom: 6px; }
 
 <p class="lede">HTML in Canvas is a proposed browser feature. It lets a page draw a <em>live</em> HTML element into a <code>&lt;canvas&gt;</code>, including text, form fields, and the text caret, and then treat the result as pixels: draw it, warp it, or feed it to a shader.</p>
 <p>Phosphor Form is the demo on this page. It is an ordinary HTML form. A WebGL shader draws it as an old CRT screen. You can still click into the fields and type. The rest of this page uses Phosphor Form to show what the feature is and what in the demo makes it "HTML in Canvas".</p>
-<p><a href="#mobile-comparison">Compare the mobile screenshots</a> · <a href="#workbench-gallery">Browse 40 projects</a> · <a href="workbench/index.html">Open Canvas Workbench</a></p>
+<p><a href="#live-labs">Try the live labs</a> · <a href="#workbench-gallery">Browse 40 projects</a> · <a href="#mobile-comparison">Compare the mobile screenshots</a></p>
+
+<section aria-labelledby="live-labs">
+  <h2 id="live-labs">Live HTML-in-Canvas labs</h2>
+  <h3>Diff two live layouts</h3>
+  <p>Edit either form, then choose Pixel diff. WebGL compares both browser-painted forms and marks where the CSS change moved pixels. At wider source widths, both layouts fit. <a href="live/layout.html">Open the layout lab on its own page</a>.</p>
+  <iframe class="live-frame" src="live/layout.html" title="Live layout diff lab" loading="lazy"></iframe>
+
+  <h3>Operate a control panel at a 3D angle</h3>
+  <p>Turn the device, then type or operate a control on its face. The same projection places the HTML texture and its click targets. Save a PNG to capture the device and its current display together. <a href="live/panel.html">Open the 3D panel on its own page</a>.</p>
+  <iframe class="live-frame" src="live/panel.html" title="Live 3D control panel lab" loading="lazy"></iframe>
+</section>
 
 <h2>Try it</h2>
 <div class="demo">
@@ -256,7 +271,7 @@ li { margin-bottom: 6px; }
 
 <section aria-labelledby="workbench-gallery">
   <h2 id="workbench-gallery">Canvas Workbench project gallery</h2>
-  <p>These screenshots show all 40 projects running with synthetic data. Select a project name to open it, or select a screenshot to view it at full size.</p>
+  <p>Use Try here to run a project in the gallery, or select its name to open the full workbench. The 40 workbench tools use editable canvas annotations, and the <a href="#live-labs">live WebGL labs</a> show texture comparison and 3D interaction.</p>
   <form class="gallery-filters" aria-label="Filter gallery projects" hidden>
     <label for="gallery-search">
       Search projects

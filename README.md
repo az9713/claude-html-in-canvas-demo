@@ -12,6 +12,15 @@ GitHub does not run scripts or iframes in a README. The screenshot above links t
 
 [Search and filter the 40-project gallery](https://az9713.github.io/claude-html-in-canvas-demo/#workbench-gallery).
 
+### Live WebGL labs
+
+- [Live layout diff](https://az9713.github.io/claude-html-in-canvas-demo/live/layout.html). Edit either version of the same form, then use Pixel diff to see where a CSS change moves the browser-painted controls.
+- [3D control panel](https://az9713.github.io/claude-html-in-canvas-demo/live/panel.html). Turn a simulated device and operate its native HTML controls on the projected surface. Save the combined WebGL view as a PNG.
+
+The labs have plain HTML fallbacks. Each gallery card also has a **Try here** button that opens the running project inline.
+
+### Run the workbench locally
+
 Open [`docs/workbench/index.html`](docs/workbench/index.html) directly in a local browser to use 40 projects for learning, science, research, software, media, and practical planning. The workbench runs from the files in this repository. It needs no server, package install, account, or API key.
 
 1. Choose a project. Each opens with synthetic sample data and instructions for its inputs.

@@ -1,5 +1,6 @@
 'use strict';
 (() => {
+  if (new URLSearchParams(location.search).has('embed')) document.body.classList.add('embedded');
   const projects = window.workbenchProjects.sort((a,b) => a.number - b.number);
   const scenePainter = window.WorkbenchScene;
   const $ = id => document.getElementById(id);
