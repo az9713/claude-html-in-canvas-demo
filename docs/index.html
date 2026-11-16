@@ -46,6 +46,34 @@ pre code { background: none; padding: 0; font-size: inherit; }
 .comparison-pair img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; }
 .gallery-nav ul { display: flex; flex-wrap: wrap; gap: 8px 16px; max-width: none; list-style: none; margin: 0; padding: 0; }
 .gallery-nav li { margin: 0; }
+.gallery-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 220px) auto;
+  gap: 10px 14px;
+  align-items: end;
+  margin: 18px 0 0;
+  padding: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.gallery-filters label { display: grid; min-width: 0; gap: 4px; font-size: 14px; font-weight: 600; color: var(--text); }
+.gallery-filters :is(input, select, button) {
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 8px 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 16px/1.35 var(--sans);
+}
+.gallery-filters :is(input, select):focus-visible, .gallery-filters button:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.gallery-filters button { cursor: pointer; }
+.gallery-filters button:hover { border-color: var(--teal); }
+.gallery-filters output { grid-column: 1 / -1; color: var(--muted); font-size: 14px; }
+#gallery-empty { margin: 16px 0; }
+.gallery-filters[hidden], .gallery-grid[hidden], .gallery-project[hidden] { display: none; }
 .gallery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .gallery-project {
   min-width: 0;
@@ -63,6 +91,10 @@ pre code { background: none; padding: 0; font-size: inherit; }
 .gallery-project dt { color: var(--text); font-weight: 600; }
 .gallery-project dd { margin: 2px 0 0; }
 @media (max-width: 650px) {
+  .gallery-filters { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
+  .gallery-filters label { grid-column: 1 / -1; }
+  .gallery-filters button { grid-area: 3 / 2; }
+  .gallery-filters output { grid-area: 3 / 1; align-self: center; }
   .gallery-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
 }
 .tbl { overflow-x: auto; margin: 14px 0 20px; }
@@ -75,6 +107,7 @@ ol, ul { max-width: 70ch; padding-left: 1.3em; }
 li { margin-bottom: 6px; }
 .fig { overflow-x: auto; margin: 16px 0; }
 </style>
+<script defer src="gallery.js"></script>
 </head>
 <body>
 <main class="wrap">
@@ -224,6 +257,21 @@ li { margin-bottom: 6px; }
 <section aria-labelledby="workbench-gallery">
   <h2 id="workbench-gallery">Canvas Workbench project gallery</h2>
   <p>These screenshots show all 40 projects running with synthetic data. Select a project name to open it, or select a screenshot to view it at full size.</p>
+  <form class="gallery-filters" aria-label="Filter gallery projects" hidden>
+    <label for="gallery-search">
+      Search projects
+      <input id="gallery-search" type="search" placeholder="Try diffusion or image review" autocomplete="off">
+    </label>
+    <label for="gallery-category">
+      Category
+      <select id="gallery-category">
+        <option value="">All categories</option>
+      </select>
+    </label>
+    <button type="button" id="gallery-clear">Clear filters</button>
+    <output for="gallery-search gallery-category" id="gallery-count" role="status"></output>
+  </form>
+  <p id="gallery-empty" hidden>No projects match. Try a different search or clear the filters.</p>
   <nav class="gallery-nav" aria-label="Gallery categories">
     <ul>
       <li><a href="#gallery-start">Start here</a></li>

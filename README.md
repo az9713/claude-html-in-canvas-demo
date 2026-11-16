@@ -10,6 +10,8 @@ GitHub does not run scripts or iframes in a README. The screenshot above links t
 
 ## Canvas Workbench
 
+[Search and filter the 40-project gallery](https://az9713.github.io/claude-html-in-canvas-demo/#workbench-gallery).
+
 Open [`docs/workbench/index.html`](docs/workbench/index.html) directly in a local browser to use 40 projects for learning, science, research, software, media, and practical planning. The workbench runs from the files in this repository. It needs no server, package install, account, or API key.
 
 1. Choose a project. Each opens with synthetic sample data and instructions for its inputs.
