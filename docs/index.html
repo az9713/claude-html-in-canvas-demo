@@ -33,6 +33,17 @@ pre code { background: none; padding: 0; font-size: inherit; }
 .demo iframe { display: block; width: 100%; height: 1320px; border: 0; }
 .demo-note { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
 .shot { width: 100%; max-width: 560px; height: auto; border-radius: 10px; border: 1px solid var(--line); display: block; margin: 14px 0 6px; }
+.comparison-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 2vw, 18px);
+  max-width: 660px;
+  margin: 10px 0 20px;
+}
+.comparison-pair figure { margin: 0; }
+.comparison-pair figcaption { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.comparison-pair a { display: block; border-radius: 10px; }
+.comparison-pair img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; }
 .tbl { overflow-x: auto; margin: 14px 0 20px; }
 table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
 th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
@@ -53,6 +64,7 @@ li { margin-bottom: 6px; }
 
 <p class="lede">HTML in Canvas is a proposed browser feature. It lets a page draw a <em>live</em> HTML element into a <code>&lt;canvas&gt;</code>, including text, form fields, and the text caret, and then treat the result as pixels: draw it, warp it, or feed it to a shader.</p>
 <p>Phosphor Form is the demo on this page. It is an ordinary HTML form. A WebGL shader draws it as an old CRT screen. You can still click into the fields and type. The rest of this page uses Phosphor Form to show what the feature is and what in the demo makes it "HTML in Canvas".</p>
+<p><a href="#mobile-comparison">Compare the mobile screenshots</a></p>
 
 <h2>Try it</h2>
 <div class="demo">
@@ -61,6 +73,35 @@ li { margin-bottom: 6px; }
 <p class="demo-note">This is the live demo. <a href="phosphor-form.html">Open it on its own page</a>. If HTML-in-Canvas is unavailable or rendering fails, the demo shows the same form with CSS scanlines and hides the shader settings.</p>
 <img class="shot" src="screenshot.png" alt="Phosphor Form drawn as an amber CRT screen: station registration form with callsign field, program radio buttons, scope time slider, equipment checkboxes, notes box, and transmit and clear buttons.">
 <p class="demo-note">Screenshot of the shader path, taken in Chrome 157 with the feature turned on.</p>
+
+<section aria-labelledby="mobile-comparison">
+  <h2 id="mobile-comparison">Mobile layout before and after</h2>
+  <p>All four screenshots use the same 390 × 844 mobile viewport in Chrome 157. Chrome scaled the original page to about 40%. The fixed page opens at 100%, and the after images show the full scrollable page. Select any screenshot to see it at full size.</p>
+
+  <h3>WebGL shader</h3>
+  <div class="comparison-pair">
+    <figure>
+      <figcaption>Before</figcaption>
+      <a href="screenshots/mobile-shader-before.png"><img src="screenshots/mobile-shader-before.png" width="390" height="844" loading="lazy" alt="Before the fix, the CRT form is zoomed out and shader sliders are packed into three columns."></a>
+    </figure>
+    <figure>
+      <figcaption>After</figcaption>
+      <a href="screenshots/mobile-shader-after.png"><img src="screenshots/mobile-shader-after.png" width="390" height="1626" loading="lazy" alt="After the fix, the CRT form fills the mobile width and shader sliders stack beneath it."></a>
+    </figure>
+  </div>
+
+  <h3>CSS fallback</h3>
+  <div class="comparison-pair">
+    <figure>
+      <figcaption>Before</figcaption>
+      <a href="screenshots/mobile-fallback-before.png"><img src="screenshots/mobile-fallback-before.png" width="390" height="844" loading="lazy" alt="Before the fix, the CSS form is zoomed out and shows inactive shader sliders."></a>
+    </figure>
+    <figure>
+      <figcaption>After</figcaption>
+      <a href="screenshots/mobile-fallback-after.png"><img src="screenshots/mobile-fallback-after.png" width="390" height="1265" loading="lazy" alt="After the fix, the CSS form fills the mobile width and the fallback message sits directly beneath it."></a>
+    </figure>
+  </div>
+</section>
 
 <h2>The problem it solves</h2>
 <p>The canvas 2D API and WebGL draw pixels. Before this proposal, neither had a call that draws an HTML element. A page that wanted a text field inside a canvas had three options:</p>
