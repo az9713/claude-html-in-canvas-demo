@@ -44,6 +44,27 @@ pre code { background: none; padding: 0; font-size: inherit; }
 .comparison-pair figcaption { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
 .comparison-pair a { display: block; border-radius: 10px; }
 .comparison-pair img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; }
+.gallery-nav ul { display: flex; flex-wrap: wrap; gap: 8px 16px; max-width: none; list-style: none; margin: 0; padding: 0; }
+.gallery-nav li { margin: 0; }
+.gallery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.gallery-project {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+}
+.gallery-project h4 { margin: 0 0 10px; font-size: 17px; line-height: 1.3; }
+.gallery-project h4 a { text-underline-offset: 3px; }
+.gallery-shot { display: block; }
+.gallery-shot img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; background: #101a25; }
+.gallery-project dl { margin: 11px 0 0; font-size: 14px; line-height: 1.5; }
+.gallery-project dl div + div { margin-top: 9px; }
+.gallery-project dt { color: var(--text); font-weight: 600; }
+.gallery-project dd { margin: 2px 0 0; }
+@media (max-width: 650px) {
+  .gallery-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+}
 .tbl { overflow-x: auto; margin: 14px 0 20px; }
 table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
 th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
@@ -64,7 +85,7 @@ li { margin-bottom: 6px; }
 
 <p class="lede">HTML in Canvas is a proposed browser feature. It lets a page draw a <em>live</em> HTML element into a <code>&lt;canvas&gt;</code>, including text, form fields, and the text caret, and then treat the result as pixels: draw it, warp it, or feed it to a shader.</p>
 <p>Phosphor Form is the demo on this page. It is an ordinary HTML form. A WebGL shader draws it as an old CRT screen. You can still click into the fields and type. The rest of this page uses Phosphor Form to show what the feature is and what in the demo makes it "HTML in Canvas".</p>
-<p><a href="#mobile-comparison">Compare the mobile screenshots</a> · <a href="workbench/index.html">Open Canvas Workbench</a></p>
+<p><a href="#mobile-comparison">Compare the mobile screenshots</a> · <a href="#workbench-gallery">Browse 40 projects</a> · <a href="workbench/index.html">Open Canvas Workbench</a></p>
 
 <h2>Try it</h2>
 <div class="demo">
@@ -199,6 +220,360 @@ li { margin-bottom: 6px; }
   <li>Mobile verification used Chrome touch emulation. Physical mobile devices and other browsers remain unverified.</li>
   <li>The API is a proposal. Names and signatures can change again.</li>
 </ul>
+
+<section aria-labelledby="workbench-gallery">
+  <h2 id="workbench-gallery">Canvas Workbench project gallery</h2>
+  <p>These screenshots show all 40 projects running with synthetic data. Select a project name to open it, or select a screenshot to view it at full size.</p>
+  <nav class="gallery-nav" aria-label="Gallery categories">
+    <ul>
+      <li><a href="#gallery-start">Start here</a></li>
+      <li><a href="#gallery-science">Science and mathematics</a></li>
+      <li><a href="#gallery-learning">Learning and research</a></li>
+      <li><a href="#gallery-software">Software and media</a></li>
+      <li><a href="#gallery-practical">Decisions and practical work</a></li>
+    </ul>
+  </nav>
+
+  <h3 id="gallery-start">Start here</h3>
+  <div class="gallery-grid">
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#diffusion-lab">Interactive diffusion lab</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/01-diffusion-lab.jpg"><img src="screenshots/workbench/01-diffusion-lab.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Analytical concentration curve and finite-difference nodes with a pinned observation"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Check how a finer mesh changes a diffusion solution before adding the result to a set of notes.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for spatial annotation. The editable observation stays beside the grid point it describes and appears in the exported plot.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#paper-figure-workbench">Paper figure workbench</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/02-paper-figure-workbench.jpg"><img src="screenshots/workbench/02-paper-figure-workbench.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Two digitized response curves with an editable evidence note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Review a paper’s figure by recording its claim, an alternative explanation, and a test that could distinguish them.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for evidence review. An editable note stays on the curve or image region as you zoom and export.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#local-model-evaluation">Local model evaluation workbench</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/03-local-model-evaluation.jpg"><img src="screenshots/workbench/03-local-model-evaluation.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Model run timeline with an editable evaluation note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare two saved model runs under the same rubric. Record where their reasoning or tool use diverged.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for review. A live note stays beside the run event and travels with the timeline export.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#style-atlas-review">3D Style Atlas review bench</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/04-style-atlas-review.jpg"><img src="screenshots/workbench/04-style-atlas-review.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Side-by-side shaded asset revisions with an editable review note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Inspect two small OBJ meshes or still renders under a consistent view and record the location of a visual defect.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for spatial review. The editable note sits on the projected comparison and exports with the view.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <h3 id="gallery-science">Science and mathematics</h3>
+  <div class="gallery-grid">
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#photonics-design">Photonics design notebook</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/05-photonics-design.jpg"><img src="screenshots/workbench/05-photonics-design.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Reflectance versus wavelength with an observation attached to the plot"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Identify which spectral feature moves when you change layer thickness, incident angle, or polarization.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for recording an experiment. Pin an explanation to the spectral feature and export the marked curve.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#phase-diagram-lab">Phase-diagram lab</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/06-phase-diagram-lab.jpg"><img src="screenshots/workbench/06-phase-diagram-lab.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Binary phase diagram with the selected composition and observation"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Practice reading a tie line and estimating phase fractions for a sample binary alloy.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A teaching aid. The canvas makes the tie line visible; live HTML lets you attach your reasoning to the composition.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#fourier-reconstruction">Fourier reconstruction bench</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/07-fourier-reconstruction.jpg"><img src="screenshots/workbench/07-fourier-reconstruction.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Input, reconstruction, and residual curves with an editable note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Vary sampling density and retained frequencies to separate aliasing from truncation in a reconstructed signal.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for teaching figures. An editable note can call out the exact peak or residual you want to discuss.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#numerical-methods-debugger">Numerical-methods debugger</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/08-numerical-methods-debugger.jpg"><img src="screenshots/workbench/08-numerical-methods-debugger.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Numerical trajectories and a pinned note about the reference solution"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare time-stepping methods and mark the point where a coarse step departs from the reference solution.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for debugging. A live note keeps the explanation beside the divergence in a shared plot.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#dimensional-analysis">Dimensional-analysis trainer</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/09-dimensional-analysis.jpg"><img src="screenshots/workbench/09-dimensional-analysis.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Diagram for checking units with an observation beside a term"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Check whether terms in a derivation have compatible dimensions, including after a change of units.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A supporting visual. The unit checker works independently, and the canvas gives you a labeled diagram to save or discuss.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#commutative-diagram">Commutative-diagram practice</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/10-commutative-diagram.jpg"><img src="screenshots/workbench/10-commutative-diagram.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Diagram of two composed paths with an editable explanation"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Check whether two compositions agree for each input in a finite example and record where they differ.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for explaining the result. Native text editing places the explanation beside the relevant path in the diagram.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#counterexample-search">Counterexample search</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/11-counterexample-search.jpg"><img src="screenshots/workbench/11-counterexample-search.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Modular arithmetic example with a pinned note on the search result"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Search a bounded domain for a small input that disproves a modular arithmetic conjecture.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A supporting visual. The search computes the result independently; an editable note makes the marked case easier to explain.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#observing-session">Observing-session planner</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/12-observing-session.jpg"><img src="screenshots/workbench/12-observing-session.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Target visibility chart with an editable observing note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare geometric visibility of sample sky targets and save notes for a candidate observing window.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for planning. A note stays beside its time or target on the chart and is preserved in a field-sheet image.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#anatomy-explanations">Anatomy explanation bench</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/13-anatomy-explanations.jpg"><img src="screenshots/workbench/13-anatomy-explanations.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Rotated schematic limb with a highlighted landmark and recall note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Rotate a schematic upper limb and identify a marked landmark from an unfamiliar viewing angle.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for spatial recall. HTML lets you type an observation beside the projected landmark and export that view.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <h3 id="gallery-learning">Learning and research</h3>
+  <div class="gallery-grid">
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#lecture-reconstruction">Lecture reconstruction</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/14-lecture-reconstruction.jpg"><img src="screenshots/workbench/14-lecture-reconstruction.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Lecture cue timeline with a reconstruction note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Pause at a timestamp, reconstruct the next derivation step, and compare your answer against the cue sheet or local video.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for timed review. The editable note sits beside the cue it refers to and can be saved with the scene.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#figure-spaced-repetition">Figure-first spaced repetition</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/15-figure-spaced-repetition.jpg"><img src="screenshots/workbench/15-figure-spaced-repetition.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Practice graph with an editable note about its slope"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Hide a graph cue and recover the meaning of a slope or plateau before revealing the answer.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for recall practice. Put your interpretation next to the relevant feature and save the marked graph.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#competing-explanations">Competing explanations board</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/16-competing-explanations.jpg"><img src="screenshots/workbench/16-competing-explanations.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Competing hypotheses and a note about a discriminating measurement"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Write down two explanations for the same observation and a measurement that could separate them.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A supporting visual. The board makes the relationship easier to inspect, while the editable note exports with the hypothesis.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#replication">Replication workbench</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/17-replication.jpg"><img src="screenshots/workbench/17-replication.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Reference and reproduced traces with a residual review note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare an original trace with a reconstruction and inspect the residual or wipe between pre-aligned images.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for review. The canvas comparison and editable note can be exported together at the focus region.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#misconception-atlas">Misconception atlas</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/18-misconception-atlas.jpg"><img src="screenshots/workbench/18-misconception-atlas.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Reasoning steps with an observation pinned to the mistake"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Log the exact reasoning step behind a mistake and revisit it later with the correction hidden.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A teaching aid. The diagram locates the mistake in a sequence, and the editable note preserves the diagnosis.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#figure-translation">Translation review for technical figures</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/19-figure-translation.jpg"><img src="screenshots/workbench/19-figure-translation.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Technical figure label review with a note about wrapping"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare English and Traditional Chinese labels in the same figure layout and review wrapping before publication.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for visual proofing. The composed figure shows the text where it will appear; live notes record changes for export.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#publication-figure">Publication figure editor</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/20-publication-figure.jpg"><img src="screenshots/workbench/20-publication-figure.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Multi-panel figure layout with an annotation about units"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Assemble a multi-panel figure from local material and save a composed image for a draft or review.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for publishing. The labels, panels, and editable annotation can be exported as a single composed image.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#source-revisions">Source revision timeline</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/21-source-revisions.jpg"><img src="screenshots/workbench/21-source-revisions.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Local draft comparison with an editable revision note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare local drafts and mark changes that affect the data, method, or interpretation.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A supporting visual. The text diff performs the comparison, and the canvas locates an annotated change in the revision overview.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#literature-measurement-map">Literature map by measurement</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/22-literature-measurement-map.jpg"><img src="screenshots/workbench/22-literature-measurement-map.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Study measurements plotted with an editable comparability note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare studies by measurement scale and the quantity reported to see which results are directly comparable.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for synthesis. An editable note stays attached to a particular measurement and appears with it in the export.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <h3 id="gallery-software">Software and media</h3>
+  <div class="gallery-grid">
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#prompt-regression-replay">Prompt regression replay</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/23-prompt-regression-replay.jpg"><img src="screenshots/workbench/23-prompt-regression-replay.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Prompt replay timeline with an editable regression note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare saved prompt runs and turn the first consequential output change into a regression case.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for diagnosis. The note stays with the affected timeline position and is included in the review snapshot.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#retrieval-review-workbench">Retrieval review workbench</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/24-retrieval-review-workbench.jpg"><img src="screenshots/workbench/24-retrieval-review-workbench.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Answer and evidence review board with a pinned review note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Check an answer against saved retrieval passages and record which evidence actually supports it.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A supporting visual. The review board organizes claims and passages, and live notes export with the selected evidence.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#ui-screenshot-review">UI screenshot review</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/25-ui-screenshot-review.jpg"><img src="screenshots/workbench/25-ui-screenshot-review.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Synthetic interface comparison with a pinned reproduction note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Wipe between two local release screenshots or show their pixel differences. Mark a regression with its reproduction context.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for visual QA. The exact image comparison, region marker, and editable comment are saved together.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#ci-timing-explorer">CI timing explorer</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/26-ci-timing-explorer.jpg"><img src="screenshots/workbench/26-ci-timing-explorer.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Build timing comparison with a note beside a job"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare two build traces and identify which job accounts for the slower run.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for diagnostics. Attach an editable rerun note to the relevant segment of the exported timing chart.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#local-hardware-tradeoff-plot">Local hardware trade-off plot</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/27-local-hardware-tradeoff-plot.jpg"><img src="screenshots/workbench/27-local-hardware-tradeoff-plot.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Hardware benchmark plot with an editable configuration note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Use saved benchmarks to compare model throughput, memory use, and quality under a chosen limit.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for decisions. Record a rerun hypothesis at the measured operating point and export it with the plot.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#animation-continuity-review">Animation continuity review</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/28-animation-continuity-review.jpg"><img src="screenshots/workbench/28-animation-continuity-review.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Two synthetic scenes with an editable continuity note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Align two stills or local video frames and record continuity problems such as a changed eyeline or direction.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for frame review. The annotation stays on the comparison scene and can be shared in a single still.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#narrated-tutorial-maker">Narrated tutorial maker</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/29-narrated-tutorial-maker.jpg"><img src="screenshots/workbench/29-narrated-tutorial-maker.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Sample motion study with a timed caption and an editable note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Preview timed captions and measurements over a sample simulation or local footage, then save the visual output.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for media composition. Live annotation joins the same frame as the footage and captions in a PNG or WebM export.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#responsive-layout-comparison">Responsive layout comparison</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/30-responsive-layout-comparison.jpg"><img src="screenshots/workbench/30-responsive-layout-comparison.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Simulated form at three widths with a note about wrapping"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare a simulated form across viewport widths and see how long input or error text affects the layout.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A supporting visual. The layout model computes the overflow, while the canvas makes both previews and the edit note exportable.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#device-interface-simulator">Device interface simulator</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/31-device-interface-simulator.jpg"><img src="screenshots/workbench/31-device-interface-simulator.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Simulated device panel with a pinned interlock note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Rehearse a simulated device sequence and see how an open door affects an interlock.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A supporting visual. The control logic drives the simulation, and the panel image is useful for explaining a step.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <h3 id="gallery-practical">Decisions and practical work</h3>
+  <div class="gallery-grid">
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#backup-restore-rehearsal">Backup and restore rehearsal</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/32-backup-restore-rehearsal.jpg"><img src="screenshots/workbench/32-backup-restore-rehearsal.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Backup and recovery diagram with a note about the verified copy"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Model a drive failure and compare the remaining copies, likely data loss, and estimated recovery time.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A supporting visual. The recovery model computes the outcome, while diagram notes record why one copy is preferred.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#home-maintenance-map">Home maintenance map</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/33-home-maintenance-map.jpg"><img src="screenshots/workbench/33-home-maintenance-map.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Synthetic floor plan with an editable maintenance note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Pin service dates, measurements, or repair notes to rooms and export a labeled area for a repair visit.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for handoff. The live label stays with a room or item and goes into the exported plan.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#repair-inspection-comparison">Repair inspection comparison</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/34-repair-inspection-comparison.jpg"><img src="screenshots/workbench/34-repair-inspection-comparison.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Inspection comparison scene with an editable tolerance note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare before-and-after photos of a repair and record a measurement against the permitted tolerance.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for inspection. The comparison and the editable observation can be shared in one image.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#geopolitical-evidence-map">Geopolitical evidence map</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/35-geopolitical-evidence-map.jpg"><img src="screenshots/workbench/35-geopolitical-evidence-map.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Schematic map with a note on the timing of a claim"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare dated claims about a location using a schematic or locally supplied map.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for source review. The note stays with the place being discussed and the exported map retains that context.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#earnings-scenario-workbench">Earnings scenario workbench</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/36-earnings-scenario-workbench.jpg"><img src="screenshots/workbench/36-earnings-scenario-workbench.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Synthetic financial sensitivity heatmap with an editable assumption note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare how synthetic operating and valuation assumptions affect a scenario before building a fuller model.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>A supporting visual. The calculation is independent, and a live note marks the assumption behind a plotted scenario.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#project-dependency-rehearsal">Project dependency rehearsal</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/37-project-dependency-rehearsal.jpg"><img src="screenshots/workbench/37-project-dependency-rehearsal.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Task dependency diagram with an editable scheduling note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Enter task dependencies and simulate a delay to see which branches and deadlines move.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for project reviews. The editable decision note stays beside the affected branch in the diagram and export.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#physical-workspace-planner">Physical workspace planner</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/38-physical-workspace-planner.jpg"><img src="screenshots/workbench/38-physical-workspace-planner.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Room and equipment footprints with a note about access"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Arrange rectangular equipment footprints in a measured room and identify overlaps and clearance issues.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for layout decisions. The note moves with the view of the floor plan and exports with the placement.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#exercise-video-review">Exercise video review journal</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/39-exercise-video-review.jpg"><img src="screenshots/workbench/39-exercise-video-review.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Matched sample review positions with an editable coaching note"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Compare matched moments in your own local clips and write a question to revisit with a coach.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for frame review. The live note can be exported alongside the selected stills and their comparison.</dd></div>
+      </dl>
+    </article>
+    <article class="gallery-project">
+      <h4><a href="workbench/index.html#field-survey-report">Field survey report builder</a></h4>
+      <a class="gallery-shot" href="screenshots/workbench/40-field-survey-report.jpg"><img src="screenshots/workbench/40-field-survey-report.jpg" width="764" height="489" loading="lazy" decoding="async" alt="Synthetic survey plan with a note at a marked reading"></a>
+      <dl>
+        <div><dt>Practical use</dt><dd>Place readings, images, and open questions on a site plan and export a report for the next visit.</dd></div>
+        <div><dt>HTML-in-Canvas role</dt><dd>Useful for field handoff. The note stays at the surveyed point and can travel with the map or point report.</dd></div>
+      </dl>
+    </article>
+  </div>
+</section>
 
 <h2>Sources</h2>
 <ul>
