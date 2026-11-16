@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src data: blob:; media-src data: blob:; base-uri 'none'; form-action 'none'">
+  <title>Canvas Workbench</title>
+  <link rel="stylesheet" href="workbench.css">
+  <script defer src="registry.js"></script>
+  <script defer src="projects-science.js"></script>
+  <script defer src="projects-learning.js"></script>
+  <script defer src="projects-production.js"></script>
+  <script defer src="project-diffusion.js"></script>
+  <script defer src="projects-decisions.js"></script>
+  <script defer src="scene.js"></script>
+  <script defer src="workbench.js"></script>
+</head>
+<body>
+  <a class="skip" href="#project-title">Skip to workbench</a>
+  <header class="masthead">
+    <a class="brand" href="index.html">Canvas Workbench</a>
+    <span class="local">Offline · Files stay local</span>
+  </header>
+  <div class="layout">
+    <nav class="catalog" aria-label="Projects">
+      <details id="catalog" open>
+        <summary>Projects <span id="catalog-count"></span></summary>
+        <label for="project-search" class="sr-only">Find a project</label>
+        <input id="project-search" type="search" placeholder="Find a project">
+        <label for="project-category" class="sr-only">Project category</label>
+        <select id="project-category"></select>
+        <ul id="project-list"></ul>
+      </details>
+    </nav>
+    <main id="workbench">
+      <header class="project-header">
+        <p id="project-category-name" class="category"></p>
+        <h1 id="project-title" tabindex="-1">Canvas Workbench</h1>
+        <p id="project-summary"></p>
+      </header>
+      <div class="workspace">
+        <section class="stage" aria-label="Experiment and results">
+          <div class="scene-toolbar">
+            <label for="marker-select">Annotation</label>
+            <select id="marker-select"></select>
+            <button id="place-pin" type="button" aria-pressed="false">Place pin</button>
+            <button id="remove-pin" type="button" hidden>Remove pin</button>
+            <label for="zoom">Zoom</label>
+            <select id="zoom">
+              <option value="1">100%</option>
+              <option value="1.25">125%</option>
+              <option value="1.5">150%</option>
+              <option value="2">200%</option>
+              <option value="2.5">250%</option>
+            </select>
+            <button id="pan" type="button" aria-pressed="false" disabled>Pan view</button>
+          </div>
+          <div id="scene-surface">
+            <canvas id="scene" content="drawable" layoutsubtree tabindex="0" aria-describedby="result-summary"></canvas>
+            <div id="flat-annotation">
+              <div id="annotation" drawable>
+                <label id="annotation-title" for="annotation-note"></label>
+                <textarea id="annotation-note" rows="2" maxlength="4000" placeholder="Add your observation"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="scene-toolbar scene-footer">
+            <button id="pin-reference" type="button">Freeze reference</button>
+            <button id="export-image" type="button">Save PNG</button>
+            <button id="play-scene" type="button" hidden>Play scene</button>
+            <button id="record" type="button" hidden>Record WebM</button>
+            <button id="render-mode" type="button" hidden>Use plain view</button>
+            <span id="renderer-status"></span>
+          </div>
+          <section class="results" aria-label="Results">
+            <p id="result-summary" role="status"></p>
+            <dl id="metrics"></dl>
+            <ul id="result-details"></ul>
+          </section>
+        </section>
+        <aside class="inspector" aria-label="Project controls">
+          <section class="inspector-section">
+            <h2>Inputs</h2>
+            <p id="project-guide"></p>
+            <div id="project-fields"></div>
+            <div id="project-actions" class="button-row"></div>
+          </section>
+          <section class="inspector-section">
+            <h2>Local sources</h2>
+            <label for="source-files">Add files</label>
+            <input id="source-files" type="file" multiple>
+            <ul id="source-list"></ul>
+          </section>
+          <section class="inspector-section">
+            <h2>Session</h2>
+            <div class="button-row">
+              <button id="save-session" type="button">Save JSON</button>
+              <button id="open-session" type="button">Open JSON</button>
+              <button id="reset" type="button">Reset project</button>
+            </div>
+            <input id="session-file" type="file" accept=".json,application/json" hidden>
+            <p id="notice" role="status"></p>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <noscript>This workbench needs JavaScript to run its local calculations.</noscript>
+</body>
+</html>

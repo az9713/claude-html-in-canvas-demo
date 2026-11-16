@@ -8,6 +8,17 @@ A live HTML form, drawn into a WebGL canvas through a CRT shader. You can still 
 
 GitHub does not run scripts or iframes in a README. The screenshot above links to the live page, and the explainer page embeds the live demo.
 
+## Canvas Workbench
+
+Open [`docs/workbench/index.html`](docs/workbench/index.html) directly in a local browser to use 40 projects for learning, science, research, software, media, and practical planning. The workbench runs from the files in this repository. It needs no server, package install, account, or API key.
+
+1. Choose a project. Each opens with synthetic sample data and instructions for its inputs.
+2. Change the inputs or add local files. Pick an annotation from the menu or place a pin on the scene. Use Zoom and Pan to inspect a region.
+3. Freeze a reference before changing a parameter. Compatible plots overlay that reference. The results panel also preserves its measurements.
+4. Save a PNG for sharing or save a JSON session to continue later. A session includes its imported files, notes, and any files used by a frozen reference. Save it before reloading or closing the workbench.
+
+Chrome with Canvas 2D HTML-in-Canvas support draws the editable annotation directly into the scene. The plain view puts the same editor above the canvas, with the same project controls and local export. Video tools use local frames in browser-supported formats. Where WebM recording is available, it records the visual canvas.
+
 ## Inspiration
 
 [Felix Rieseberg](https://x.com/felixrieseberg) posted on 15 November 2026: "All hail the weird web. I just enabled HTML-in-Canvas in Claude's desktop apps." He shared demos made with it and compared the feel to the Flash days. This repo is a small experiment built from that idea.
