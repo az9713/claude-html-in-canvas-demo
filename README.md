@@ -12,6 +12,12 @@ GitHub does not run scripts or iframes in a README. The screenshot above links t
 
 [Search and filter the 40-project gallery](https://az9713.github.io/claude-html-in-canvas-demo/#workbench-gallery).
 
+### Second batch of 40 live demos
+
+[Open Live Canvas Lab](https://az9713.github.io/claude-html-in-canvas-demo/live/batch-two/). The second batch uses real browser-painted HTML controls for pixel inspection, spatial interfaces, publication proofs, and visual verification. Each project has a task to try and explains what HTML-in-Canvas contributes. Examples include a rendered contrast meter, a folded leaflet proof, a bidirectional typesetting proof, and a scanline test of a scaled label.
+
+Open [`docs/live/batch-two/index.html`](docs/live/batch-two/index.html) for local use. The lab uses synthetic examples, plain JavaScript, browser APIs, and local CSS. It requires no packages, external assets, accounts, or API calls.
+
 ### Live WebGL labs
 
 - [Live layout diff](https://az9713.github.io/claude-html-in-canvas-demo/live/layout.html). Edit either version of the same form, then use Pixel diff to see where a CSS change moves the browser-painted controls.

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src data: blob:; base-uri 'none'; form-action 'none'">
+  <title>Live Canvas Lab · 40 projects</title>
+  <link rel="stylesheet" href="lab.css">
+  <script defer src="../renderer.js"></script>
+  <script defer src="canvas2d.js"></script>
+  <script defer src="registry.js"></script>
+  <script defer src="quality.js"></script>
+  <script defer src="spatial.js"></script>
+  <script defer src="publishing.js"></script>
+  <script defer src="measurement.js"></script>
+  <script defer src="lab.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <a href="../../index.html#live-labs">HTML-in-Canvas explainer</a>
+    <span>Live Canvas Lab</span>
+  </header>
+  <div class="layout">
+    <nav aria-label="Live projects">
+      <details id="catalog" open>
+        <summary>Projects <output id="catalog-count"></output></summary>
+        <label>Search <input id="search" type="search" placeholder="Find a project" autocomplete="off"></label>
+        <label>Technique <select id="group"><option value="">All techniques</option></select></label>
+        <ul id="projects"></ul>
+      </details>
+    </nav>
+    <main>
+      <header class="project-header">
+        <p id="technique"></p>
+        <h1 id="project-title" tabindex="-1">Live Canvas Lab</h1>
+        <p id="summary"></p>
+      </header>
+      <section aria-label="Live experiment" class="experiment">
+        <p id="try-it"></p>
+        <div class="controls" id="controls"></div>
+        <div id="stage"></div>
+        <footer>
+          <p id="status" role="status"></p>
+          <button type="button" id="save" hidden>Save composite PNG</button>
+        </footer>
+      </section>
+      <section class="mechanism" aria-labelledby="method-title">
+        <h2 id="method-title">What the API contributes</h2>
+        <p id="mechanism"></p>
+      </section>
+    </main>
+  </div>
+  <noscript>Enable JavaScript to run the local interactive experiments.</noscript>
+</body>
+</html>

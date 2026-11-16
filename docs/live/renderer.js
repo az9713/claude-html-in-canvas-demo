@@ -15,6 +15,58 @@ window.LiveCanvas = (() => {
     uniform int uMode;
     uniform float uWipe;
     uniform vec4 uColor;
+    uniform int uEffect;
+    uniform vec4 uCrop, uParams;
+    uniform float uOpacity;
+    float luminance(vec3 color) { return dot(color, vec3(0.2126, 0.7152, 0.0722)); }
+    vec4 process(vec4 source, vec2 coord) {
+      vec3 color = source.rgb;
+      float light = luminance(color);
+      vec2 pixelStep = 1.0 / vec2(textureSize(uLeft, 0));
+      if (uEffect == 1) color = vec3(light);
+      if (uEffect == 2) color = clamp((color - 0.5) * (uParams.x > 0.0 ? uParams.x : 1.7) + 0.5, 0.0, 1.0);
+      if (uEffect == 3) color = vec3(step(uParams.x > 0.0 ? uParams.x : 0.5, light));
+      if (uEffect == 4) {
+        float x = luminance(texture(uLeft, coord + vec2(pixelStep.x, 0)).rgb) - luminance(texture(uLeft, coord - vec2(pixelStep.x, 0)).rgb);
+        float y = luminance(texture(uLeft, coord + vec2(0, pixelStep.y)).rgb) - luminance(texture(uLeft, coord - vec2(0, pixelStep.y)).rgb);
+        color = clamp(length(vec2(x,y)) * 1.7, 0.0, 1.0) * vec3(0.52,0.94,0.82);
+      }
+      if (uEffect == 5) color = clamp(vec3(
+        dot(color, vec3(0.37, 0.86, -0.23)),
+        dot(color, vec3(0.28, 0.67, 0.05)),
+        dot(color, vec3(-0.01, 0.04, 0.97))
+      ), 0.0, 1.0);
+      if (uEffect == 6) {
+        vec4 blur = vec4(0);
+        float radius = uParams.x > 0.0 ? uParams.x : 4.0;
+        for (int y = -1; y <= 1; y++) {
+          for (int x = -1; x <= 1; x++) blur += texture(uLeft, coord + vec2(x,y) * pixelStep * radius);
+        }
+        return blur / 9.0;
+      }
+      if (uEffect == 7) {
+        float levels = uParams.x >= 2.0 ? uParams.x : 4.0;
+        color = round(color * (levels-1.0)) / (levels-1.0);
+      }
+      if (uEffect == 8) color = mix(mix(vec3(.10,.21,.41),vec3(.14,.70,.72),smoothstep(0.0,.5,light)),
+        vec3(1.0,.64,.21),smoothstep(.4,1.0,light));
+      if (uEffect == 9) {
+        vec2 p = vec2(coord.x,1.0-coord.y);
+        vec2 high = uParams.xy + uParams.zw;
+        if (all(greaterThanEqual(p,uParams.xy)) && all(lessThanEqual(p,high))) return vec4(.025,.032,.043,1.0);
+      }
+      if (uEffect == 10) {
+        color = mix(vec3(.14,.13,.115), vec3(.97,.95,.88), smoothstep(.38,.70,light));
+      }
+      if (uEffect == 11) {
+        color = mix(vec3(.14,.18,.15),vec3(.86,.90,.80),floor(light*4.0+.5)/4.0);
+      }
+      if (uEffect == 12) {
+        float cutoff = uParams.x > 0.0 ? uParams.x : .22;
+        return source * smoothstep(cutoff,cutoff+.035,light);
+      }
+      return vec4(color, source.a);
+    }
     void main() {
       if (uMode == 3) {
         pixel = uColor;
@@ -26,21 +78,22 @@ window.LiveCanvas = (() => {
         pixel = vec4(vec3(0.05, 0.085, 0.11) + vec3(0.04, 0.055, 0.06) * grid, 1.0);
         return;
       }
-      vec4 left = texture(uLeft, vUv);
+      vec2 coord = vec2(uCrop.x + vUv.x*uCrop.z, 1.0-uCrop.y-uCrop.w + vUv.y*uCrop.w);
+      vec4 left = texture(uLeft, coord);
       if (uMode == 0) {
-        pixel = left;
+        pixel = process(left,coord) * uOpacity;
         return;
       }
-      vec4 right = texture(uRight, vUv);
+      vec4 right = texture(uRight, coord);
       if (uMode == 1) {
         float divider = 1.0 - smoothstep(0.001, 0.004, abs(vUv.x - uWipe));
-        pixel = mix(vUv.x < uWipe ? left : right, vec4(0.52, 0.94, 0.82, 1.0), divider);
+        pixel = mix(vUv.x < uWipe ? left : right, vec4(0.52, 0.94, 0.82, 1.0), divider) * uOpacity;
         return;
       }
       vec3 change = abs(left.rgb - right.rgb);
       float intensity = smoothstep(0.035, 0.32, max(change.r, max(change.g, change.b)));
       float backdrop = dot(right.rgb, vec3(0.21, 0.72, 0.07));
-      pixel = vec4(mix(vec3(backdrop * 0.37 + 0.06), vec3(1.0, 0.57, 0.19), intensity), 1.0);
+      pixel = vec4(mix(vec3(backdrop * 0.37 + 0.06), vec3(1.0, 0.57, 0.19), intensity), 1.0) * uOpacity;
     }
   `;
 
@@ -70,7 +123,6 @@ window.LiveCanvas = (() => {
   }
 
   function open(canvas, { panels, render, fallback, ready }) {
-    let renderer;
     try {
       const gl = canvas.getContext('webgl2', {alpha:false, antialias:true, preserveDrawingBuffer:true});
       if (!gl || typeof gl.texElementSubImage2D !== 'function' ||
@@ -79,8 +131,7 @@ window.LiveCanvas = (() => {
         fallback('HTML-in-Canvas is unavailable here. The controls still work in the plain HTML view.');
         return null;
       }
-      renderer = setup(gl, canvas, panels, render, ready, fallback);
-      return renderer;
+      return setup(gl, canvas, panels, render, ready, fallback);
     } catch (error) {
       fallback('The canvas could not start. The controls are available in the plain HTML view.');
       return null;
@@ -91,10 +142,11 @@ window.LiveCanvas = (() => {
     const program = programFor(gl);
     const buffer = gl.createBuffer();
     const textures = new Map(panels.map(element => [element, {object:gl.createTexture(), width:0, height:0}]));
+    const frozen = new Map();
     const events = new AbortController();
     const options = {signal:events.signal};
     let width = 0, height = 0, frame = 0, firstFrame = true;
-    const uniforms = Object.fromEntries(['uLeft','uRight','uMode','uWipe','uColor']
+    const uniforms = Object.fromEntries(['uLeft','uRight','uMode','uWipe','uColor','uEffect','uCrop','uParams','uOpacity']
       .map(key => [key, gl.getUniformLocation(program, key)]));
 
     gl.useProgram(program);
@@ -134,30 +186,81 @@ window.LiveCanvas = (() => {
       check();
     }
 
-    function draw(points, mode, color, left, right, wipe) {
+    const effects = ['','grayscale','contrast','threshold','edges','deuteranopia','blur','posterize','heat','redact','print','eink','key'];
+    let registered = new Set(), updated = new Set();
+    function draw(points, mode, color, left, right, settings = {}) {
       const uv = [[0,1], [0,0], [1,1], [1,0]];
       const vertices = new Float32Array(points.flatMap(({x,y,w}, i) => [
         2*x/width-w, w-2*y/height, 0, w, ...uv[i]
       ]));
       gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STREAM_DRAW);
       gl.uniform1i(uniforms.uMode, mode);
-      gl.uniform1f(uniforms.uWipe, wipe ?? .5);
+      gl.uniform1f(uniforms.uWipe, settings.wipe ?? .5);
+      gl.uniform1i(uniforms.uEffect, Math.max(0,effects.indexOf(settings.effect)));
+      gl.uniform4fv(uniforms.uCrop, settings.uv ?? [0,0,1,1]);
+      const [a=0,b=0,c=0,d=0] = settings.params ?? [];
+      gl.uniform4fv(uniforms.uParams, [a,b,c,d]);
+      gl.uniform1f(uniforms.uOpacity, settings.opacity ?? 1);
       if (color) gl.uniform4fv(uniforms.uColor, color);
       gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, textures.get(left ?? panels[0]).object);
+      gl.bindTexture(gl.TEXTURE_2D, (left ?? textures.get(panels[0])).object);
       gl.activeTexture(gl.TEXTURE1);
-      gl.bindTexture(gl.TEXTURE_2D, textures.get(right ?? left ?? panels[0]).object);
+      gl.bindTexture(gl.TEXTURE_2D, (right ?? left ?? textures.get(panels[0])).object);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
     const scene = {
-      surface(element, matrix, { mode = 0, other, wipe } = {}) {
-        draw(corners(matrix, element.offsetWidth, element.offsetHeight), mode, null, element, other, wipe);
+      surface(element, matrix, settings = {}) {
+        draw(corners(matrix, element.offsetWidth, element.offsetHeight), settings.mode ?? 0, null,
+          textures.get(element), textures.get(settings.other) ?? frozen.get(settings.other), settings);
       },
       solid(points, color) { draw(points, 3, color); },
       grid() { draw(corners(new DOMMatrix(), width, height), 4); },
-      register(element, matrix) { canvas.updateElementGeometry(element, {canvasTransform:matrix}); },
-      unregister(element) { canvas.clearElementGeometry(element); }
+      register(element, matrix, clip) {
+        updated.add(element);
+        canvas.updateElementGeometry(element, {canvasTransform:matrix, ...(clip ? {canvasClip:clip} : {})});
+      },
+      unregister(element) { canvas.clearElementGeometry(element); },
+      clip(x, y, w, h, renderClip) {
+        const rx = canvas.width / width, ry = canvas.height / height;
+        const previous = gl.isEnabled(gl.SCISSOR_TEST) ? gl.getParameter(gl.SCISSOR_BOX) : null;
+        let x0 = Math.max(0,Math.floor(x*rx)), y0 = Math.max(0,Math.floor((height-y-h)*ry));
+        let x1 = Math.min(canvas.width,Math.ceil((x+w)*rx)), y1 = Math.min(canvas.height,Math.ceil((height-y)*ry));
+        if (previous) {
+          x0 = Math.max(x0,previous[0]); y0 = Math.max(y0,previous[1]);
+          x1 = Math.min(x1,previous[0]+previous[2]); y1 = Math.min(y1,previous[1]+previous[3]);
+        }
+        gl.enable(gl.SCISSOR_TEST);
+        gl.scissor(x0,y0,Math.max(0,x1-x0),Math.max(0,y1-y0));
+        try { renderClip(); } finally {
+          if (previous) gl.scissor(...previous);
+          else gl.disable(gl.SCISSOR_TEST);
+        }
+      },
+      sample(x,y) {
+        const color = new Uint8Array(4);
+        const px = Math.min(canvas.width-1,Math.max(0,Math.floor(x*canvas.width/width)));
+        const py = Math.min(canvas.height-1,Math.max(0,canvas.height-1-Math.floor(y*canvas.height/height)));
+        gl.readPixels(px,py,1,1,gl.RGBA,gl.UNSIGNED_BYTE,color);
+        return [...color];
+      },
+      freeze(key, element) {
+        scene.drop(key);
+        const data = {object:gl.createTexture(),width:0,height:0,cssWidth:element.offsetWidth,cssHeight:element.offsetHeight};
+        frozen.set(key,data);
+        upload(element,data);
+      },
+      snapshot(key,matrix,settings = {}) {
+        const data = frozen.get(key);
+        if (data) draw(corners(matrix,data.cssWidth,data.cssHeight),settings.mode ?? 0,null,
+          data,textures.get(settings.other) ?? frozen.get(settings.other),settings);
+      },
+      frozen(key) { return frozen.has(key); },
+      drop(key) {
+        if (!frozen.has(key)) return;
+        gl.deleteTexture(frozen.get(key).object);
+        frozen.delete(key);
+      }
     };
 
     const observer = new ResizeObserver(request);
@@ -169,16 +272,21 @@ window.LiveCanvas = (() => {
       });
     }
 
-    function stop(message) {
-      if (events.signal.aborted) return;
+    function dispose() {
+      if (events.signal.aborted) return false;
       events.abort();
       cancelAnimationFrame(frame);
       clearTimeout(timer);
       observer.disconnect();
       for (const data of textures.values()) gl.deleteTexture(data.object);
+      for (const key of frozen.keys()) scene.drop(key);
       gl.deleteBuffer(buffer);
       gl.deleteProgram(program);
-      fallback(message);
+      return true;
+    }
+
+    function stop(message) {
+      if (dispose()) fallback(message);
     }
 
     function paint() {
@@ -194,7 +302,12 @@ window.LiveCanvas = (() => {
         gl.clearColor(.05, .085, .11, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
         for (const [element, data] of textures) upload(element, data);
+        updated = new Set();
         render(scene, width, height);
+        for (const element of registered) {
+          if (!updated.has(element)) scene.unregister(element);
+        }
+        registered = updated;
         check();
         if (firstFrame) {
           firstFrame = false;
@@ -211,7 +324,7 @@ window.LiveCanvas = (() => {
     canvas.addEventListener('webglcontextlost', () => stop('WebGL stopped. The controls are available in the plain HTML view.'), options);
     observer.observe(canvas);
     request();
-    return { request };
+    return { request, dispose };
   }
 
   function save(canvas, filename) {
