@@ -30,6 +30,42 @@ The form is real DOM. The browser handles the caret, focus, radio buttons, check
 
 The [explainer](https://az9713.github.io/claude-html-in-canvas-demo/) covers this in full: the five pieces, a diagram of how a keystroke reaches the shader, what does not count as HTML in Canvas, and the API problems found while building it.
 
+## Ideas and projects to build
+
+These are ideas, not tested projects. Each one uses a capability the proposal gives: real DOM content drawn as pixels, which a shader or a 3D scene can then change. The WICG repo already has examples for some of them (`complex-text`, `pie-chart`, `nested-sparkles`, a WebGL card flip, and a WebGPU "jelly slider"). They are in its [Examples folder](https://github.com/WICG/html-in-canvas/tree/main/Examples).
+
+**Shader-skinned interfaces** (the idea behind this demo)
+- **Liquid glass and frosted panels.** Draw a settings panel as a texture, then blur and refract whatever is behind it. The controls stay real.
+- **Click ripples and glitch transitions.** Distort the form around the pointer when a button is pressed.
+- **Other screens.** A vector monitor, a Game Boy LCD with a pixel grid, an e-ink page that ghosts when it changes, a thermal-printer receipt.
+
+**Real UI on 3D surfaces**
+- **A working laptop or arcade cabinet in a 3D scene.** The screen is a mesh. Its texture is a live form, a chat, or a spreadsheet. Keyboard focus and `updateElementGeometry` give the clicks a place to land.
+- **A book with page curl.** Each page is a drawable element with real text, links, and inputs. The curl is a vertex shader.
+- **A museum room.** Each painting on the wall is an HTML card you can walk up to and use.
+
+**Page transitions**
+- **Shatter, dissolve, or fold between two pages.** Capture both pages as textures and mix them in a shader. Neither page needs to be a screenshot.
+
+**Rich text and charts in canvas**
+- **Text on a spiral, a globe, or a wave.** The browser does the shaping, so right-to-left scripts, emoji, and line breaks stay correct.
+- **Charts with real HTML labels.** Multi-line, wrapped labels in a pie or Sankey chart, drawn by the canvas but laid out by CSS.
+
+**Games**
+- **Dialogue boxes, inventories, and name-entry screens** that use real inputs, and still sit inside the game's post-processing (bloom, bend, film grain).
+
+**Export**
+- **HTML to PNG or video.** Render an invoice, a certificate, or a social card as HTML, draw it to a canvas, then call `toBlob()` or record the canvas with `MediaRecorder`. An animated HTML title card becomes a video file.
+
+**Worker rendering**
+- **Heavy effects off the main thread.** The proposal lets a page pass an `ElementImage` to a worker that draws into an `OffscreenCanvas`. A particle burst over a form could then run without slowing typing.
+
+**Accessibility experiments**
+- **Canvas apps that screen readers can read.** The content is real DOM, so the accessibility tree can hold the labels. The proposal says geometry must be set (with `updateElementGeometry`) for assistive tools to place the content.
+
+**The weird web**
+- **A site that is one canvas.** A navigation you fly through, a desktop with draggable windows, a zine whose pages react to the mouse. This is the Flash-era feel that Felix Rieseberg's post described, with real links and inputs instead of a plugin.
+
 ## See the shader
 
 The shader needs a browser with HTML-in-Canvas turned on:
