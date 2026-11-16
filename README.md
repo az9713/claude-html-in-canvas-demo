@@ -4,7 +4,7 @@ A live HTML form, drawn into a WebGL canvas through a CRT shader. You can still 
 
 [![Phosphor Form drawn as an amber CRT screen](docs/screenshot.png)](https://az9713.github.io/claude-html-in-canvas-demo/phosphor-form.html)
 
-**[Open the live demo](https://az9713.github.io/claude-html-in-canvas-demo/phosphor-form.html)** · **[Read the explainer](https://az9713.github.io/claude-html-in-canvas-demo/)**
+**[Open the live demo](https://az9713.github.io/claude-html-in-canvas-demo/phosphor-form.html)** · **[Read the explainer](https://az9713.github.io/claude-html-in-canvas-demo/)** · **[Compare mobile screenshots](#what-changed-on-screen)**
 
 GitHub does not run scripts or iframes in a README. The screenshot above links to the live page, and the explainer page embeds the live demo.
 
@@ -78,6 +78,28 @@ The shader needs a browser with HTML-in-Canvas turned on:
 - On phones, the page opens at normal zoom and fits the screen width. The station header and form buttons can wrap on narrow screens, and the shader settings stack as space gets tight.
 - In CSS fallback, the amber form and scanlines remain visible, and the shader settings are hidden. If the shader fails to start, the page switches to that same form and displays the reason.
 - In shader mode, the settings appear after the first successful frame. The amber glow, curvature, and scanline effects retain their original look.
+
+All four screenshots use the same 390 × 844 mobile viewport in Chrome 157. Chrome scaled the original page to about 40%, so all of it fit in one screen. The fixed page opens at 100%. The after images include the full scrollable page to show what appears below the form.
+
+### WebGL shader
+
+<table>
+  <tr><th>Before</th><th>After</th></tr>
+  <tr>
+    <td valign="top"><img src="docs/screenshots/mobile-shader-before.png" width="290" alt="Before the fix, the CRT form is zoomed out and shader sliders are packed into three columns."></td>
+    <td valign="top"><img src="docs/screenshots/mobile-shader-after.png" width="290" alt="After the fix, the CRT form fills the mobile width and shader sliders stack beneath it."></td>
+  </tr>
+</table>
+
+### CSS fallback
+
+<table>
+  <tr><th>Before</th><th>After</th></tr>
+  <tr>
+    <td valign="top"><img src="docs/screenshots/mobile-fallback-before.png" width="290" alt="Before the fix, the CSS form is zoomed out and shows inactive shader sliders."></td>
+    <td valign="top"><img src="docs/screenshots/mobile-fallback-after.png" width="290" alt="After the fix, the CSS form fills the mobile width and the fallback message sits directly beneath it."></td>
+  </tr>
+</table>
 
 ## Run it locally
 
