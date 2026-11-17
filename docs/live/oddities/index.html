@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src data: blob:; base-uri 'none'; form-action 'none'">
+<title>Four Impossible Pages · HTML-in-Canvas</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="pages.css">
+<script defer src="pages.js"></script>
+</head>
+<body>
+<header class="mast"><a href="../../">HTML-in-Canvas explainer</a><a href="../studio/">Canvas Studio</a></header>
+<main>
+  <header class="intro">
+    <h1>Four Impossible Pages</h1>
+    <p>An interactive newspaper, comic, street sign, and puppet theater. The words are live HTML. What happens to them is up to you.</p>
+  </header>
+  <nav aria-label="Experiments">
+    <a href="#rain">Rain newspaper</a>
+    <a href="#comic">Cross-examination comic</a>
+    <a href="#sign">Two-address billboard</a>
+    <a href="#theater">Punctuation theater</a>
+  </nav>
+  <section id="scene" aria-labelledby="scene-title"></section>
+</main>
+
+<template id="rain">
+  <h2 id="scene-title">The Newspaper That Catches Rain</h2>
+  <p>Let the headline catch a puddle. Edit the words on the page and watch the water find a new way through.</p>
+  <div class="controls">
+    <button type="button" id="rain-play" aria-pressed="true">Pause rain</button>
+    <button type="button" id="rain-reset">Drain the page</button>
+    <label>Downpour <input id="rain-rate" type="range" min="1" max="7" value="4"></label>
+    <output id="rain-total" for="rain-rate"></output>
+  </div>
+  <canvas content="drawable" class="rain-canvas" aria-label="Rain simulation on an editable newspaper headline">
+    <textarea drawable id="headline" aria-label="Newspaper headline" maxlength="42" spellcheck="false">RAIN ON
+PRESS DAY</textarea>
+  </canvas>
+  <p class="status" role="status"></p>
+  <p class="method">The simulation samples the painted headline to find solid ink. Changing the headline changes the barriers while the existing water stays in place.</p>
+</template>
+
+<template id="comic">
+  <h2 id="scene-title">A Comic You Can Cross-Examine</h2>
+  <p>A delivery robot ended up in a fountain. Move the camera and pin two frames. See how much the crop changes the story.</p>
+  <div class="controls">
+    <label>Camera position <input id="camera" type="range" min="0" max="280" value="0"></label>
+    <button type="button" id="pin-a">Pin as Exhibit A</button>
+    <button type="button" id="pin-b">Pin as Exhibit B</button>
+    <button type="button" id="save-exhibits">Save exhibits PNG</button>
+  </div>
+  <canvas content="drawable" class="witness-canvas" aria-label="Full cartoon panel with camera frame"></canvas>
+  <div class="exhibits">
+    <section aria-labelledby="label-a"><h3 id="label-a">Exhibit A</h3><canvas content="drawable" aria-label="Pinned crop A"></canvas></section>
+    <section aria-labelledby="label-b"><h3 id="label-b">Exhibit B</h3><canvas content="drawable" aria-label="Pinned crop B"></canvas></section>
+  </div>
+  <p class="status" role="status"></p>
+  <p class="method">The pins save framing. The dialogue stays live across all three views. Edit a witness in one view and the other views update. The exhibits use canvas clipping for both drawing and hit testing.</p>
+</template>
+
+<template id="panel">
+  <article drawable class="comic-panel" aria-label="The fountain incident">
+    <div class="comic-caption">THE FOUNTAIN INCIDENT</div>
+    <label class="witness witness-a"><span>Gardener</span><textarea data-line="0" aria-label="Gardener dialogue" maxlength="92" spellcheck="false">That robot went straight through the flowers.</textarea></label>
+    <label class="witness witness-b"><span>Mechanic</span><textarea data-line="1" aria-label="Mechanic dialogue" maxlength="92" spellcheck="false">Its brakes failed. It turned away from the crowd.</textarea></label>
+    <div class="garden" aria-hidden="true"><i></i><b></b></div>
+    <div class="fountain" aria-hidden="true"><i></i></div>
+    <div class="machine" aria-hidden="true"><i></i><b></b></div>
+    <div class="repair" aria-hidden="true"><i></i><b></b></div>
+  </article>
+</template>
+
+<template id="sign">
+  <h2 id="scene-title">A Billboard With Two Addresses</h2>
+  <p>Cross the concourse. The same sign reads differently from each side. Try a longer translation and stop halfway to see the messages bleed together.</p>
+  <div class="controls">
+    <label>Standing position <input id="angle" type="range" min="-60" max="60" value="-50"></label>
+    <button type="button" data-angle="-50">Platform side</button>
+    <button type="button" data-angle="0">Center</button>
+    <button type="button" data-angle="50">Street side</button>
+  </div>
+  <canvas content="drawable" class="billboard-canvas" aria-label="Angle-dependent billboard and its two editable message plates">
+    <label drawable class="sign-plate platform"><span>← PLATFORM SIDE</span><input aria-label="Platform message" id="left-message" maxlength="25" value="TRAINS"></label>
+    <label drawable class="sign-plate street"><span>STREET SIDE →</span><input aria-label="Street message" id="right-message" maxlength="25" value="STREET"></label>
+  </canvas>
+  <p class="status" role="status"></p>
+  <p class="method">The canvas interlaces strips from both HTML message plates. A simulated slatted face exposes mostly one set of strips at either side and both sets near the middle.</p>
+</template>
+
+<template id="theater">
+  <h2 id="scene-title">The Theater Where Punctuation Has Weight</h2>
+  <p>Edit the script, then cue the last punctuation mark. A period drops straight down. A question mark swings toward the peg and can drag the scenery if its painted edge makes contact.</p>
+  <div class="controls">
+    <button type="button" id="cue">Cue punctuation</button>
+    <label>Typeface <select id="face"><option value="serif">Georgia</option><option value="mono">Courier New</option><option value="sans">Arial</option></select></label>
+    <button type="button" id="reset-stage">Reset scenery</button>
+    <output id="stage-event" aria-live="polite">Scene ready.</output>
+  </div>
+  <canvas content="drawable" class="theater-canvas" aria-label="Punctuation puppet stage and its editable script">
+    <label drawable class="script"><span>SCRIPT · EDIT THIS LINE</span><input id="script-line" aria-label="Script line" maxlength="56" value="Will the moon wait for us?"></label>
+    <div drawable inert id="punctuation" data-face="serif" aria-hidden="true">?</div>
+  </canvas>
+  <p class="status" role="status"></p>
+  <p class="method">The actor is a browser-painted glyph. The stage tests that actual glyph’s pixels against its scenery peg. Changing the typeface changes the contact surface.</p>
+</template>
+</body>
+</html>

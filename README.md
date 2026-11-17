@@ -12,6 +12,15 @@ GitHub does not run scripts or iframes in a README. The screenshot above links t
 
 [Search and filter the 40-project gallery](https://az9713.github.io/claude-html-in-canvas-demo/#workbench-gallery).
 
+### Four Impossible Pages
+
+[Open Four Impossible Pages](https://az9713.github.io/claude-html-in-canvas-demo/live/oddities/). Four standalone experiments make the live HTML part of the scene.
+
+- [Rain newspaper](https://az9713.github.io/claude-html-in-canvas-demo/live/oddities/#rain) uses the ink of an editable headline to steer a downpour.
+- [Cross-examination comic](https://az9713.github.io/claude-html-in-canvas-demo/live/oddities/#comic) lets you crop and compare two versions of the same incident.
+- [Two-address billboard](https://az9713.github.io/claude-html-in-canvas-demo/live/oddities/#sign) interlaces two editable signs and simulates what each side of the concourse sees.
+- [Punctuation theater](https://az9713.github.io/claude-html-in-canvas-demo/live/oddities/#theater) tests whether a painted question mark can hook a piece of scenery.
+
 ### Canvas Studio
 
 [Open Canvas Studio](https://az9713.github.io/claude-html-in-canvas-demo/live/studio/). Five creative experiments use editable HTML inside the scene.
