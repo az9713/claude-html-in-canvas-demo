@@ -17,7 +17,7 @@
 body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.5 var(--body); }
 a { color: var(--active); text-underline-offset: 3px; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.masthead { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px clamp(12px,3vw,36px); border-bottom: 1px solid var(--line); background: var(--stage); }
+.masthead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 10px clamp(12px,3vw,36px); border-bottom: 1px solid var(--line); background: var(--stage); }
 .masthead a { font-size: 13px; }
 .masthead span { color: var(--accent); font: 600 1.2rem var(--head); }
 .layout { display: grid; grid-template-columns: 245px minmax(0,1fr); max-width: 1480px; margin: auto; }

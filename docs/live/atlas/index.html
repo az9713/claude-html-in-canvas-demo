@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; worker-src 'self'; style-src 'self'; img-src 'self' blob: data:; base-uri 'none'; form-action 'none'">
+  <title>HTML-in-Canvas feature atlas</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="atlas.css">
+  <script defer src="compute.js"></script>
+  <script defer src="atlas.js"></script>
+</head>
+<body>
+  <header class="mast">
+    <a href="../../index.html#live-labs">HTML-in-Canvas explainer</a>
+    <a href="../batch-two/">40 project examples</a>
+  </header>
+  <main>
+    <header class="intro">
+      <h1>HTML-in-Canvas feature atlas</h1>
+      <p>Five hands-on tests of browser capabilities from the WICG proposal. Each experiment exposes the evidence you can check while you use it.</p>
+    </header>
+    <nav id="experiments" aria-label="API experiments">
+      <a href="#worker">Worker rendering</a>
+      <a href="#nested">Nested layers</a>
+      <a href="#dirty">Selective repaint</a>
+      <a href="#geometry">Hit-test clipping</a>
+      <a href="#compute">WebGPU compute</a>
+    </nav>
+    <section id="experiment" aria-labelledby="active-title"></section>
+    <details class="research">
+      <summary>How the API works</summary>
+      <p>A drawable HTML subtree gives the browser a source to paint. The canvas can draw that paint directly, use it as a GPU texture, or capture a transferable ElementImage. DOM geometry connects the drawing back to pointer interaction and accessibility bounds.</p>
+      <p>Support varies by browser and graphics adapter. These examples probe each feature independently. The proposal also limits readback of information such as cross-origin content, uncommitted autofill, and visited-link state.</p>
+      <ul>
+        <li><a href="https://github.com/WICG/html-in-canvas#proposed-solution">WICG primitives and examples</a></li>
+        <li><a href="https://github.com/WICG/html-in-canvas#offscreen-canvas-example">WICG worker example</a></li>
+        <li><a href="https://developer.chrome.com/docs/web-platform/html-in-canvas/webgpu">Chrome WebGPU texture-upload guide</a></li>
+      </ul>
+    </details>
+  </main>
+  <template id="worker-view">
+    <h2 id="active-title">Worker-rendered dispatch proof</h2>
+    <p>Type in the dispatch card inside the canvas. Change the number of proof copies below it, then export the sheet. A worker paints the main card and copies from one transferred HTML capture.</p>
+    <div class="controls">
+      <label>Proof copies <select id="copies"><option>1</option><option selected>3</option><option>4</option></select></label>
+      <button id="save-proof" type="button" disabled>Save worker PNG</button>
+      <output id="worker-metrics"></output>
+    </div>
+    <canvas content="drawable" layoutsubtree aria-label="Worker-rendered dispatch sheet">
+      <section id="dispatch" class="source dispatch" drawable aria-label="Editable dispatch label">
+        <h3>Dispatch label</h3>
+        <label>Destination <input id="destination" value="Assembly bay C" maxlength="34" spellcheck="false"></label>
+        <label>Routing code <input id="routing" value="SAMPLE–042" maxlength="18" spellcheck="false"></label>
+      </section>
+    </canvas>
+    <div class="plain" hidden></div>
+    <p class="status" role="status">Starting worker.</p>
+    <p class="method"><code>captureElementImage()</code> produces an image that the page transfers to a worker. The worker’s 2D context draws the editor and proof copies using <code>drawElementImage()</code>. Geometry updates let the editor receive input from the visible canvas.</p>
+  </template>
+  <template id="nested-view">
+    <h2 id="active-title">Move a sign-off without breaking its document structure</h2>
+    <p>Enter a revision in the sign-off. Move it to the margin, then select Parent paint only to inspect exactly what the parent capture contains.</p>
+    <div class="controls">
+      <label>Sign-off placement <select id="signoff-placement"><option value="margin">Beside the notice</option><option value="dock">Over the notice</option><option value="parent">Parent paint only</option></select></label>
+      <output id="nested-metrics"></output>
+    </div>
+    <canvas content="drawable" layoutsubtree aria-label="Maintenance notice and independently painted sign-off">
+      <article id="notice" class="source notice" drawable aria-labelledby="notice-title">
+        <h3 id="notice-title">Maintenance notice</h3>
+        <label>Work item <input id="work-item" value="Inspect the sample filter bank" maxlength="36" spellcheck="false"></label>
+        <p class="notice-copy">Check the inlet, record the reading, and confirm the replacement is seated.</p>
+        <section id="signoff" class="source signoff" drawable aria-label="Notice sign-off">
+          <h3>Sign-off</h3>
+          <label>Revision <input id="revision" value="R-02" maxlength="12" spellcheck="false"></label>
+          <button id="sign" type="button">Mark reviewed</button>
+          <output id="sign-result">Review pending</output>
+        </section>
+      </article>
+    </canvas>
+    <div class="plain" hidden></div>
+    <p class="status" role="status">Preparing the notice.</p>
+    <p class="method">A nested <code>drawable</code> is excluded from its parent’s paint. The sign-off stays inside the notice in the DOM, while Canvas 2D places and hit-tests the two surfaces independently.</p>
+  </template>
+  <template id="dirty-view">
+    <h2 id="active-title">Update one card on a dispatch wall</h2>
+    <p>Change a dock state. Watch the capture counters for each card. Reflow the wall to see which browser paint snapshots can be reused.</p>
+    <div class="controls">
+      <button id="reflow" type="button" aria-pressed="false">Reverse wall order</button>
+      <button id="reset-counts" type="button">Reset counters</button>
+      <output id="dirty-log"></output>
+    </div>
+    <canvas content="drawable" layoutsubtree aria-label="Dispatch wall composed from cached browser paint">
+      <section class="source dock" id="dock-a" drawable aria-label="Dock A">
+        <h3>Dock A</h3><label>State <select id="state-a"><option>Ready</option><option>Loading</option><option>Closed</option></select></label>
+      </section>
+      <section class="source dock" id="dock-b" drawable aria-label="Dock B">
+        <h3>Dock B</h3><label>State <select id="state-b"><option>Ready</option><option selected>Loading</option><option>Closed</option></select></label>
+      </section>
+      <section class="source dock" id="dock-c" drawable aria-label="Dock C">
+        <h3>Dock C</h3><label>State <select id="state-c"><option>Ready</option><option>Loading</option><option selected>Closed</option></select></label>
+      </section>
+    </canvas>
+    <div class="plain" hidden></div>
+    <p class="status" role="status">Preparing the wall.</p>
+    <p class="method"><code>paint.changedElements</code> reports which browser paints changed. Only those dock cards are recaptured. A canvas-only reorder can reuse all three cached <code>ElementImage</code> objects.</p>
+  </template>
+  <template id="geometry-view">
+    <h2 id="active-title">Make a clipped drawer obey its visible hit targets</h2>
+    <p>Click the visible gray History button and the orange Hold button. Disable hit-test clipping, then click History again to reproduce the mismatch.</p>
+    <div class="controls">
+      <label class="toggle"><input id="sync-clip" type="checkbox" checked> Match hit targets to the clip</label>
+      <output id="hit-result" role="status">Select a visible button.</output>
+    </div>
+    <canvas content="drawable" layoutsubtree aria-label="Overlapping native controls with a visible split">
+      <section id="history" class="source overlap history" drawable aria-label="History layer">
+        <h3>Dispatch history</h3><button id="open-history" type="button">History</button>
+      </section>
+      <section id="drawer" class="source overlap drawer" drawable aria-label="Hold drawer">
+        <h3>Dispatch drawer</h3><button id="hold" type="button">Hold</button>
+      </section>
+    </canvas>
+    <div class="plain" hidden></div>
+    <p class="status" role="status">Preparing hit geometry.</p>
+    <p class="method">A canvas clip changes the visible pixels. The matching <code>canvasClip</code> in <code>updateElementGeometry()</code> changes where the browser routes a pointer event. The two are independently observable.</p>
+  </template>
+  <template id="compute-view">
+    <h2 id="active-title">Measure printed ink coverage on the GPU</h2>
+    <p>Edit the notice and change the darkness threshold. WebGPU classifies the painted pixels, shows the mask, and returns the number of marked pixels.</p>
+    <div class="controls">
+      <label>Darkness threshold <input id="threshold" type="range" min="8" max="70" value="35"></label>
+      <output id="ink-metrics"></output>
+    </div>
+    <canvas content="drawable" layoutsubtree aria-label="Editable notice and WebGPU coverage mask">
+      <section id="ink-source" class="source ink-source" drawable aria-label="Editable print notice">
+        <h3>Inspection notice</h3>
+        <label>Printed message <textarea id="ink-text" rows="2" maxlength="130" spellcheck="false">Inspect sample enclosure before moving it to the next station.</textarea></label>
+        <label>Text weight <select id="ink-weight"><option value="400">Regular</option><option value="800">Heavy</option></select></label>
+      </section>
+    </canvas>
+    <div class="plain" hidden></div>
+    <p class="status" role="status">Requesting WebGPU.</p>
+    <p class="method"><code>drawElementImageToTexture()</code> puts the native browser paint into a GPU texture. A compute pass counts dark pixels there, and a rendering pass shows the result. The CPU reads the count from a four-byte buffer.</p>
+  </template>
+  <noscript>Enable JavaScript to run the interactive examples.</noscript>
+</body>
+</html>

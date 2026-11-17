@@ -12,6 +12,20 @@ GitHub does not run scripts or iframes in a README. The screenshot above links t
 
 [Search and filter the 40-project gallery](https://az9713.github.io/claude-html-in-canvas-demo/#workbench-gallery).
 
+### HTML-in-Canvas feature atlas
+
+[Open the five live experiments](https://az9713.github.io/claude-html-in-canvas-demo/live/atlas/). Each uses a different part of the [WICG proposal](https://github.com/WICG/html-in-canvas#proposed-solution).
+
+| Experiment | What to check |
+| --- | --- |
+| [Worker rendering](https://az9713.github.io/claude-html-in-canvas-demo/live/atlas/#worker) | Type into a dispatch label drawn by a worker and export the proof sheet. |
+| [Nested layers](https://az9713.github.io/claude-html-in-canvas-demo/live/atlas/#nested) | Reposition a sign-off independently of its parent document and inspect the parent paint. |
+| [Selective repaint](https://az9713.github.io/claude-html-in-canvas-demo/live/atlas/#dirty) | Update a dock card and check which HTML captures the browser invalidates. |
+| [Hit-test clipping](https://az9713.github.io/claude-html-in-canvas-demo/live/atlas/#geometry) | Click the same spot as the application changes hit-test order and clipping. |
+| [WebGPU compute](https://az9713.github.io/claude-html-in-canvas-demo/live/atlas/#compute) | Edit a label and measure its painted ink coverage in a GPU compute pass. |
+
+The atlas uses synthetic samples and browser APIs. Each experiment reports which native features are available. Serve `docs/` on localhost to try the worker example locally.
+
 ### Second batch of 40 live demos
 
 [Open Live Canvas Lab](https://az9713.github.io/claude-html-in-canvas-demo/live/batch-two/). The second batch uses real browser-painted HTML controls for pixel inspection, spatial interfaces, publication proofs, and visual verification. Each project has a task to try and explains what HTML-in-Canvas contributes. Examples include a rendered contrast meter, a folded leaflet proof, a bidirectional typesetting proof, and a scanline test of a scaled label.
