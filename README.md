@@ -12,6 +12,16 @@ GitHub does not run scripts or iframes in a README. The screenshot above links t
 
 [Search and filter the 40-project gallery](https://az9713.github.io/claude-html-in-canvas-demo/#workbench-gallery).
 
+### Canvas Studio
+
+[Open Canvas Studio](https://az9713.github.io/claude-html-in-canvas-demo/live/studio/). Five creative experiments use editable HTML inside the scene.
+
+- [Printmaking](https://az9713.github.io/claude-html-in-canvas-demo/live/studio/#print) separates browser-painted art into two color plates and offsets one to proof registration.
+- [Animation](https://az9713.github.io/claude-html-in-canvas-demo/live/studio/#motion) reuses a title-card capture as ghost frames while you scrub the motion.
+- [Storytelling](https://az9713.github.io/claude-html-in-canvas-demo/live/studio/#story) gives the reader native HTML choices inside an illustrated lighthouse scene.
+- [Cartoons](https://az9713.github.io/claude-html-in-canvas-demo/live/studio/#comic) lets you edit and move a nested speech balloon independently of its panel.
+- [Billboards](https://az9713.github.io/claude-html-in-canvas-demo/live/studio/#sign) downsamples live artwork into an LED grid to check legibility and simulate a broken column.
+
 ### HTML-in-Canvas feature atlas
 
 [Open the five live experiments](https://az9713.github.io/claude-html-in-canvas-demo/live/atlas/). Each uses a different part of the [WICG proposal](https://github.com/WICG/html-in-canvas#proposed-solution).

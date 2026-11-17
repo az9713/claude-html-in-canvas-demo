@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src data: blob:; base-uri 'none'; form-action 'none'">
+  <title>Canvas Studio · Five live creative experiments</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="studio.css">
+  <script defer src="studio.js"></script>
+</head>
+<body>
+  <header class="mast">
+    <a href="../../">HTML-in-Canvas explainer</a>
+    <a href="../atlas/">Feature atlas</a>
+  </header>
+  <main>
+    <header class="intro">
+      <h1>Canvas Studio</h1>
+      <p>Make a print, time a loop, choose a story branch, letter a cartoon, or proof a street sign. Interact with the HTML inside each scene.</p>
+    </header>
+    <nav aria-label="Creative experiments">
+      <a href="#print">Printmaking</a>
+      <a href="#motion">Animation</a>
+      <a href="#story">Storytelling</a>
+      <a href="#comic">Cartoons</a>
+      <a href="#sign">Billboards</a>
+    </nav>
+    <section id="experiment" aria-labelledby="title"></section>
+    <p class="reference"><a href="https://github.com/WICG/html-in-canvas">WICG HTML-in-Canvas proposal</a></p>
+  </main>
+
+  <template id="print">
+    <h2 id="title">Two-color print proof</h2>
+    <p>Rename the exhibition on the left. Slide the red plate to see how registration changes the printed edges.</p>
+    <div class="controls">
+      <label>Red plate offset <input id="offset" type="range" min="0" max="18" value="8"></label>
+      <output id="measure" for="offset">8 px</output>
+      <button type="button" data-save>Save canvas PNG</button>
+    </div>
+    <canvas content="drawable" aria-label="Editable poster master and two-color print proof">
+      <article class="art master" drawable>
+        <span>PRINT ROOM / EXHIBITION 06</span>
+        <label><span class="sr-only">Exhibition name</span><input id="exhibition" value="AFTER IMAGE" maxlength="16"></label>
+        <div class="orb" aria-hidden="true"></div>
+        <footer>Paper studies · Second edition</footer>
+      </article>
+    </canvas>
+    <div class="plain" hidden></div><p class="status" role="status"></p>
+    <p class="method">One live HTML capture supplies both ink plates. Canvas compositing recolors and offsets the browser-painted shapes, including the edited title.</p>
+  </template>
+
+  <template id="motion">
+    <h2 id="title">Title-card motion study</h2>
+    <p>Rename the card, choose the easing, then scrub. The faded copies let you see how much distance the title covers between exposures.</p>
+    <div class="controls">
+      <button id="play" type="button" aria-pressed="false">Play</button>
+      <label>Frame <input id="frame" type="range" min="0" max="119" value="43"></label>
+      <label>Easing <select id="ease"><option value="smooth">Ease in and out</option><option value="linear">Linear</option></select></label>
+    </div>
+    <canvas content="drawable" aria-label="Editable title and an onion-skin motion study">
+      <article class="art slate" drawable>
+        <span>FLIGHT STUDY</span>
+        <label>Film title <input id="film" value="NIGHT FLIGHT" maxlength="18"></label>
+      </article>
+    </canvas>
+    <div class="plain" hidden></div><p class="status" role="status"></p>
+    <p class="method">The browser paints the editable title once per change. The canvas reuses that capture at different time offsets and positions while the source stays interactive.</p>
+  </template>
+
+  <template id="story">
+    <h2 id="title">The lighthouse transmission</h2>
+    <p>Choose what the keeper does. Each choice changes the story text and the lighting of the scene around it.</p>
+    <div class="controls"><button id="restart" type="button">Restart story</button></div>
+    <canvas content="drawable" aria-label="Branching story set inside a lighthouse canvas scene">
+      <article class="art script" drawable aria-labelledby="scene-title">
+        <p class="chapter" id="chapter">THE TRANSMISSION</p>
+        <h3 id="scene-title">A voice in the fog</h3>
+        <p id="scene-text" aria-live="polite">A radio crackles from the stairwell. A ferry asks for a signal, but the lighthouse lamp has gone dark.</p>
+        <button id="first" type="button">Light the lantern</button>
+        <button id="second" type="button">Answer the radio</button>
+      </article>
+    </canvas>
+    <div class="plain" hidden></div><p class="status" role="status"></p>
+    <p class="method">The story is a real HTML article with native choices and a live region. Its rendered card participates in the same canvas scene as the sea, the lighthouse, and the signal.</p>
+  </template>
+
+  <template id="comic">
+    <h2 id="title">Cartoon lettering desk</h2>
+    <p>Edit the speech balloon directly. Place it over either speaker and watch the tail follow. Hide the lettering to check the underlying panel.</p>
+    <div class="controls">
+      <label>Speaker <select id="speaker"><option value="pilot">Pilot</option><option value="bot">Robot</option></select></label>
+      <label><input id="lettering" type="checkbox" checked> Show lettering</label>
+      <button type="button" data-save>Save canvas PNG</button>
+    </div>
+    <canvas content="drawable" aria-label="Cartoon panel with a separate editable speech balloon">
+      <article class="art comic" drawable aria-label="Cartoon with a pilot and a robot">
+        <div class="caption">SOMEWHERE ABOVE A VERY SMALL MOON</div>
+        <div class="stars" aria-hidden="true"></div>
+        <div class="pilot" aria-hidden="true"><i></i></div>
+        <div class="bot" aria-hidden="true"><i></i></div>
+        <label class="balloon" drawable>Dialogue<textarea id="dialogue" rows="2" maxlength="65">Does this button make coffee?</textarea></label>
+      </article>
+    </canvas>
+    <div class="plain" hidden></div><p class="status" role="status"></p>
+    <p class="method">The speech balloon is an independent nested drawable. Canvas can place it and draw its tail while the dialogue stays semantically part of the panel.</p>
+  </template>
+
+  <template id="sign">
+    <h2 id="title">Street billboard legibility proof</h2>
+    <p>Change the event copy. Reduce the LED resolution or simulate a broken column to see what survives on the sign.</p>
+    <div class="controls">
+      <label>Panel resolution <select id="resolution"><option value="96">96 columns</option><option value="48">48 columns</option><option value="24">24 columns</option></select></label>
+      <label><input id="defect" type="checkbox"> Broken LED column</label>
+      <button type="button" data-save>Save canvas PNG</button>
+    </div>
+    <canvas content="drawable" aria-label="Editable billboard artwork and LED simulation">
+      <article class="art sign-source" drawable>
+        <span>PLATFORM 06</span>
+        <label><span class="sr-only">Billboard headline</span><input id="headline" value="NIGHT MARKET" maxlength="17"></label>
+        <label><span class="sr-only">Billboard details</span><input id="details" value="SATURDAY · 18:00" maxlength="24"></label>
+      </article>
+    </canvas>
+    <div class="plain" hidden></div><p class="status" role="status"></p>
+    <p class="method">The simulator downsamples the actual browser paint into LED cells. Type, layout, and colors come from the live artwork, so the proof uses the same input as the editor.</p>
+  </template>
+</body>
+</html>

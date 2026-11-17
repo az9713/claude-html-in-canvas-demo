@@ -1,0 +1,92 @@
+:root {
+  color-scheme: dark;
+  color: #f5eee2;
+  background: #141317;
+  font: 16px/1.55 system-ui, sans-serif;
+  --line: #49434b;
+  --accent: #ffc18c;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+a { color: var(--accent); text-underline-offset: .2em; }
+button, input, select, textarea { font: inherit; }
+button, select {
+  border: 1px solid #655961;
+  border-radius: .25rem;
+  background: #211b23;
+  color: #faf5ed;
+  padding: .38rem .7rem;
+}
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid #ffa958; outline-offset: 2px; }
+input { accent-color: #ffc18c; }
+.mast {
+  max-width: 1200px;
+  margin: auto;
+  padding: 1rem clamp(14px,4vw,42px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .4rem 1rem;
+  border-bottom: 1px solid var(--line);
+  font-size: .9rem;
+}
+main { max-width: 1200px; margin: auto; padding: 0 clamp(14px,4vw,42px) 3rem; }
+.intro { margin: 2.5rem 0 1.4rem; }
+h1, h2 { margin: 0; font-family: Georgia, serif; line-height: 1.08; }
+h1 { font-size: clamp(2.9rem,8vw,6.4rem); letter-spacing: -.07em; }
+h2 { font-size: clamp(1.9rem,4vw,3rem); letter-spacing: -.045em; }
+.intro p, #experiment > p { max-width: 64ch; }
+nav { display: flex; gap: .45rem; flex-wrap: wrap; margin: 0 0 1.8rem; }
+nav a { border: 1px solid var(--line); border-radius: .3rem; padding: .4rem .72rem; text-decoration: none; }
+nav a[aria-current] { background: var(--accent); border-color: var(--accent); color: #231313; }
+#experiment { border-top: 1px solid var(--line); padding-top: 1.25rem; }
+.controls { display: flex; flex-wrap: wrap; gap: .5rem 1.05rem; align-items: center; padding: .75rem; background: #28222a; }
+.controls label { display: flex; align-items: center; flex-wrap: wrap; gap: .45rem; }
+.controls input[type="range"] { max-width: 120px; }
+canvas { display: block; width: 100%; height: 455px; background: #212028; border: 1px solid var(--line); }
+.status { color: #eac5a2; font: .84rem/1.45 ui-monospace, monospace; }
+.method { color: #ddcdd4; border-left: 2px solid var(--accent); padding-left: .8rem; }
+.reference { font-size: .9rem; }
+.plain { padding: .7rem 0; }
+.plain .art { max-width: 100%; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.art { display: block; box-sizing: border-box; color: #21182a; }
+.art label { display: block; font-size: 12px; font-weight: 700; }
+.art input, .art textarea { display: block; width: 100%; border: 0; border-radius: 0; color: inherit; margin-top: 3px; padding: 3px 5px; }
+.art input:focus, .art textarea:focus { outline: 2px solid #df5a36; outline-offset: -2px; }
+.master { width: 290px; height: 279px; padding: 19px; background: #fff8e7; }
+.master span, .master footer { font: 700 11px/1.6 ui-monospace, monospace; letter-spacing: .04em; }
+.master label { margin-top: 11px; }
+.master input { font: 900 25px/1.2 Georgia, serif; background: transparent; border-bottom: 1px solid #bbb0a5; }
+.orb { width: 132px; height: 132px; margin: 12px auto; border-radius: 50%; background: repeating-linear-gradient(143deg,#20202c 0 7px,transparent 7px 13px); border: 4px solid #20202c; }
+.slate { width: 290px; height: 95px; padding: 11px 15px; border-radius: 5px; color: #15142c; background: #f4df9c; border: 3px solid #312747; }
+.slate span { font: 700 10px ui-monospace, monospace; letter-spacing: .18em; }
+.slate input { font: 900 24px/1.1 Georgia, serif; background: #fcf0be; }
+.script { width: 340px; min-height: 215px; padding: 17px 18px; border: 2px solid #f4b77d; border-radius: 7px; color: #ffeed3; background: #261b28; }
+.script .chapter { margin: 0 0 6px; color: #ffc587; font: 700 10px ui-monospace, monospace; letter-spacing: .12em; }
+.script h3 { margin: 0; font: 700 25px/1.1 Georgia, serif; }
+.script p { margin: .5rem 0; }
+.script button { margin: 3px 2px 0 0; padding: 5px 7px; font-size: 13px; border-color: #ae846a; }
+.comic { position: relative; width: 530px; height: 365px; overflow: visible; border: 5px solid #15111d; background: radial-gradient(ellipse at 30% 82%, #d77273 0 13%, transparent 14%), linear-gradient(156deg, #312044, #100d20 75%); }
+.caption { position: absolute; top: 10px; left: 10px; padding: 5px 7px; background: #ffd894; border: 2px solid #261a2d; font: 900 12px ui-monospace, monospace; }
+.stars { position: absolute; inset: 12% 0 0; background: radial-gradient(circle at 8% 24%, #ffe5b0 0 2px, transparent 3px),radial-gradient(circle at 36% 46%, #ffabba 0 2px, transparent 3px),radial-gradient(circle at 79% 13%, #ffe5b0 0 2px, transparent 3px),radial-gradient(circle at 69% 58%, #ffabba 0 2px, transparent 3px),radial-gradient(circle at 95% 35%, #ffe5b0 0 2px, transparent 3px); }
+.pilot, .bot { position: absolute; bottom: 25px; width: 114px; height: 114px; border: 5px solid #171120; }
+.pilot { left: 64px; background: #e4a78b; border-radius: 50% 50% 30% 30%; }
+.bot { right: 64px; background: #88c5be; border-radius: 20% 20% 28% 28%; }
+.pilot i, .bot i { position: absolute; inset: 26px 12px 40px; border-radius: 20px; border: 4px solid #19121f; background: radial-gradient(circle at 34% 50%,#fff1d5 0 6px,transparent 7px),radial-gradient(circle at 65% 50%,#fff1d5 0 6px,transparent 7px),#5c4068; }
+.balloon { width: 244px; position: absolute; top: 74px; left: 136px; padding: 10px 14px; border: 3px solid #1b1528; border-radius: 16px; background: #fff2ce; }
+.balloon textarea { background: #fff9e7; resize: none; line-height: 1.2; font: 700 15px/1.2 system-ui, sans-serif; }
+.plain .balloon { top: 80px; left: 8%; width: 84%; }
+.sign-source { display: flex; flex-direction: column; justify-content: center; gap: 6px; width: 335px; height: 132px; padding: 10px 15px; background: #102831; color: #faffcd; border: 2px solid #59aa9a; }
+.sign-source > span { display: block; color: #9bffe2; font: 700 10px ui-monospace, monospace; }
+.sign-source input { font: 900 28px/1.05 ui-monospace, monospace; padding: 1px 4px; margin-top: 1px; background: transparent; }
+.sign-source #details { font-size: 19px; color: #b8f3d7; }
+.studio-sign canvas { height: 495px; }
+@media (max-width: 660px) {
+  .intro { margin-top: 1.8rem; }
+  canvas { height: 445px; }
+  .studio-print canvas { height: 607px; }
+  .studio-comic canvas { height: 360px; }
+}
