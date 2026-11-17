@@ -476,7 +476,7 @@
         } else {
           started = performance.now();
           shifted = 0;
-          actor = { x: 110, y: 88, hooked: false, lastT: 0, token };
+          actor = { x: 110, y: 88, hooked: false, nextStep: 0, grip: 0, token };
           setText(response, 'On stage · ' + token);
         }
       }
@@ -508,17 +508,21 @@
       if (actor.token === '?') {
         const x = 110 + 314*t;
         const y = 89 + 93*Math.sin(Math.PI*t*.74);
-        // Test intermediate positions so the result does not depend on frame rate.
-        for (let k = actor.lastT; !actor.hooked && k < t; k += .006) {
+        // A hook needs sustained contact. Use fixed path increments so a
+        // one-pixel graze cannot catch the peg at one frame rate and miss at another.
+        const slices = 360;
+        const lastStep = Math.floor(t * slices);
+        for (; !actor.hooked && actor.nextStep <= lastStep; actor.nextStep++) {
+          const k = actor.nextStep / slices;
           const probeX = 110 + 314*k;
           const probeY = 89 + 93*Math.sin(Math.PI*k*.74);
-          if (hitsPeg(probeX, probeY)) {
+          actor.grip = hitsPeg(probeX, probeY) ? actor.grip + 1 : 0;
+          if (actor.grip === 3) {
             actor.hooked = true;
             actor.contact = probeX;
             setText(response, 'The painted edge caught the peg.');
           }
         }
-        actor.lastT = t;
         actor.x = x;
         actor.y = y;
         if (actor.hooked) shifted = Math.min(105, x-actor.contact);
