@@ -395,8 +395,25 @@
   }
 
   function theater(ui) {
-    const glyph = ui.$('punctuation');
+    const canvas = ui.canvases[0];
     const script = ui.$('script-line');
+    const glyphs = new Map();
+    const stencils = new WeakMap();
+    const marks = '?.!,;:…—';
+    for (const face of ['serif', 'mono', 'sans']) {
+      for (const mark of marks) {
+        const node = document.createElement('div');
+        node.className = 'punctuation';
+        node.dataset.face = face;
+        node.setAttribute('drawable', '');
+        node.setAttribute('aria-hidden', 'true');
+        node.inert = true;
+        node.textContent = mark;
+        glyphs.set(face + mark, node);
+        canvas.append(node);
+      }
+    }
+    let glyph = glyphs.get('serif?');
     const response = ui.$('stage-event');
     let stencil, actor, pending = false, shifted = 0;
     let started;
@@ -439,11 +456,9 @@
     function syncGlyph() {
       token = lastMark();
       const face = ui.$('face').value;
-      const mark = token || '?';
-      if (glyph.dataset.face !== face || glyph.textContent !== mark) {
-        glyph.dataset.face = face;
-        setText(glyph, mark);
-        stencil = undefined;
+      const next = glyphs.get(face + (token || '?'));
+      if (next !== glyph) {
+        glyph = next;
         actor = undefined;
         started = undefined;
         shifted = 0;
@@ -452,7 +467,8 @@
       draw();
     }
     function repaint(frame) {
-      if (!stencil) stencil = sample(frame.ctx, glyph, sampleWidth, sampleHeight, '#000');
+      if (!stencils.has(glyph)) stencils.set(glyph, sample(frame.ctx, glyph, sampleWidth, sampleHeight, '#000'));
+      stencil = stencils.get(glyph);
       if (pending) {
         pending = false;
         if (!token) {

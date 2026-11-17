@@ -60,16 +60,16 @@ textarea, .sign-plate input, .script input { resize:none; border-radius:0; }
 .sign-plate input { min-width:0; color:inherit; padding:0; background:transparent; border:0; font:900 34px/1.13 Georgia,serif; }
 .script { display:grid; align-content:center; gap:5px; width:590px; height:87px; padding:7px 12px; color:#302530; background:#f9dfad; border:2px solid #805461; }
 .script input { color:#302530; background:transparent; padding:0; border:0; border-bottom:1px solid #a46770; font:700 28px/1.1 Georgia,serif; }
-#punctuation { display:grid; place-items:center; width:112px; height:132px; color:#fff0c7; background:transparent; font:900 116px/.95 Georgia,serif; }
-#punctuation[data-face="mono"] { font-family:"Courier New",monospace; }
-#punctuation[data-face="sans"] { font-family:Arial,sans-serif; }
+.punctuation { display:grid; place-items:center; width:112px; height:132px; color:#fff0c7; background:transparent; font:900 116px/.95 Georgia,serif; }
+.punctuation[data-face="mono"] { font-family:"Courier New",monospace; }
+.punctuation[data-face="sans"] { font-family:Arial,sans-serif; }
 .plain { display:flex; flex-wrap:wrap; gap:6px; padding:.6rem; background:#28212c; }
 .plain > * { max-width:100%; }
 .plain #headline { background:#efe2c4; height:auto; font-size:clamp(24px,7vw,61px); }
 .plain .comic-panel { display:grid; gap:8px; padding:12px; height:auto; }
 .plain .comic-panel > :is(.comic-caption,.witness) { position:relative; inset:auto; max-width:100%; }
 .plain .comic-panel > [aria-hidden] { display:none; }
-.plain #punctuation { display:none; }
+.plain .punctuation { display:none; }
 @media(max-width:550px) {
   .exhibits { grid-template-columns:minmax(0,1fr); }
   .mast { font-size:.8rem; }

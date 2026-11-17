@@ -7,8 +7,8 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src data: blob:; base-uri 'none'; form-action 'none'">
 <title>Four Impossible Pages · HTML-in-Canvas</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="pages.css">
-<script defer src="pages.js"></script>
+<link rel="stylesheet" href="pages.css?v=2">
+<script defer src="pages.js?v=2"></script>
 </head>
 <body>
 <header class="mast"><a href="../../">HTML-in-Canvas explainer</a><a href="../studio/">Canvas Studio</a></header>
@@ -101,7 +101,6 @@ PRESS DAY</textarea>
   </div>
   <canvas content="drawable" class="theater-canvas" aria-label="Punctuation puppet stage and its editable script">
     <label drawable class="script"><span>SCRIPT · EDIT THIS LINE</span><input id="script-line" aria-label="Script line" maxlength="56" value="Will the moon wait for us?"></label>
-    <div drawable inert id="punctuation" data-face="serif" aria-hidden="true">?</div>
   </canvas>
   <p class="status" role="status"></p>
   <p class="method">The actor is a browser-painted glyph. The stage tests that actual glyph’s pixels against its scenery peg. Changing the typeface changes the contact surface.</p>
